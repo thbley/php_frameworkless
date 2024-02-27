@@ -1,0 +1,113 @@
+{
+    // See https://code.visualstudio.com/docs/editor/tasks#vscode
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "phpcsfixer",
+            "type": "shell",
+            "command": "docker compose -f docker-compose-tasks-be.yml run --rm phpcsfixer",
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "psalm",
+            "type": "shell",
+            "command": [
+                "docker compose -f docker-compose-tasks-be.yml run --rm psalm;",
+                "docker compose -f docker-compose-tasks-be.yml run --rm psalm_taint"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "phpstan",
+            "type": "shell",
+            "command": "docker compose -f docker-compose-tasks-be.yml run --rm phpstan",
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "rector",
+            "type": "shell",
+            "command": "docker compose -f docker-compose-tasks-be.yml run --rm rector",
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "phpmd",
+            "type": "shell",
+            "command": "docker compose -f docker-compose-tasks-be.yml run --rm phpmd",
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "update-database",
+            "type": "shell",
+            "command": "docker compose -f docker-compose-tasks-be.yml run --rm cli update_database.php",
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "phpunit",
+            "type": "shell",
+            "command": [
+                "docker compose -f docker-compose-tasks-be.yml run --rm phpunit;",
+                "docker compose -f docker-compose-tasks-be.yml run --rm phpunit_feature"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "composer",
+            "type": "shell",
+            "command": [
+                "mkdir -p -m 0777 tasks_be/src/vendor tasks_be/tests/vendor;",
+                "docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer;",
+                "docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer_tests"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "echo": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "readme",
+            "type": "shell",
+            "command": "code readme.md",
+            "presentation": {
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "edit",
+            "type": "shell",
+            "command": "code .vscode/tasks.json",
+            "presentation": {
+                "reveal": "never"
+            }
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+<div class="template-login fade-in">
+    <form @submit.prevent="$app.loginController.login(
+        $el.querySelector('[name=email]').value, $el.querySelector('[name=password]').value)">
+        <div>
+            <label for="template-login-email">Email:</label>
+        </div>
+        <div>
+            <input type="text" id="template-login-email" name="email" placeholder="foo@bar.baz" autocomplete="off" required autofocus>
+        </div>
+
+        <div>
+            <label for="template-login-password">Password:</label>
+        </div>
+        <div>
+            <input type="password" id="template-login-password" name="password" placeholder="insecure" autocomplete="off" required>
+        </div>
+
+        <div></div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+</div>

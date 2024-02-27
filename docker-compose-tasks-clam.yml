@@ -1,0 +1,12 @@
+version: "3.2"
+
+include:
+  - docker-compose.yml
+
+services:
+  clamav:
+    build: ./docker/clamav
+    image: example_tasks_clamav
+    cap_drop: [all]
+    working_dir: /var/www
+    volumes: [./tasks_be/:/var/www/tasks_be:ro, ./tasks_fe/:/var/www/tasks_fe:ro]

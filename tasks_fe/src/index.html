@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="description" content="PHP Tasks Rest API">
+        <title>PHP Tasks Rest API</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'><text x='0.1em' y='0.95em' font-size='8'>🗹</text></svg>">
+        <link rel="preload" href="/tasks/index.css" as="style">
+        <link rel="modulepreload" href="/tasks/index.js" as="script">
+        <link rel="stylesheet" href="/tasks/index.css">
+        <script type="module" src="/tasks/index.js"></script>
+    </head>
+    <body x-data>
+        <header class="header">
+            <div class="logo">
+                <h1>
+                    <a href="/tasks/">
+                        <img src="/tasks/images/php.jpg" alt="PHP">
+                    </a> Tasks Rest API
+                </h1>
+            </div>
+            <nav class="navigation" x-show="$app.pageStore.loggedin" x-cloak>
+                <span x-text="`(${$app.tasksStore.tasks.length})`"></span> |
+                <a href="/tasks/" :class="{active: $app.pageStore.route === '/tasks/'}">Home</a> |
+                <a href="/tasks/create" :class="{active: $app.pageStore.route === '/tasks/create' }">Create task</a> |
+                <span x-text="$app.pageStore.email"></span> |
+                <a href="" @click.prevent="$app.loginController.logout()">Logout</a>
+            </nav>
+        </header>
+        <hr>
+        <div class="error" x-show="$app.pageStore.errors.length > 0" :data-error-count="$app.pageStore.errors.length" x-cloak>
+            <template x-for="(error, index) in $app.pageStore.errors">
+                <div>
+                    <a href="" @click.prevent="$app.pageStore.errors.splice(index, 1)">✖️</a>&nbsp;
+                    <span x-text="error"></span>
+                </div>
+            </template>
+        </div>
+        <template x-if="$app.pageStore.debugJsHeap !== '' || $app.pageStore.debugWebVitals !== ''">
+            <aside class="debug">
+                <div x-text="$app.pageStore.debugWebVitals"></div>
+                <div x-text="$app.pageStore.debugJsHeap"></div>
+                <hr>
+            </aside>
+        </template>
+
+        <main class="main" :data-route="$app.pageStore.route">
+            <article>
+                <template x-if="$app.pageStore.route === 'notFound'">
+                    <section x-src="/tasks/templates/404.html"></section>
+                </template>
+
+                <template x-if="$app.pageStore.route !== 'notFound' && !$app.pageStore.loggedin">
+                    <section x-src="/tasks/templates/login.html"></section>
+                </template>
+
+                <template x-if="$app.pageStore.route === '/tasks/create' && $app.pageStore.loggedin">
+                    <section x-src="/tasks/templates/tasks_create.html"></section>
+                </template>
+
+                <template x-if="$app.pageStore.route === '/tasks/edit/(\\d+)' && $app.pageStore.loggedin">
+                    <section x-src="/tasks/templates/tasks_edit.html"></section>
+                </template>
+
+                <template x-if="$app.pageStore.route === '/tasks/' && $app.pageStore.loggedin">
+                    <section x-src="/tasks/templates/tasks_list.html"></section>
+                </template>
+            </article>
+        </main>
+    </body>
+</html>

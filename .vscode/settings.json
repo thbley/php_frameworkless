@@ -1,0 +1,70 @@
+{
+    "editor.guides.indentation": false,
+    "editor.minimap.enabled": false,
+    "editor.renderLineHighlight": "line",
+    "editor.rulers": [120],
+    "editor.gotoLocation.multipleDefinitions": "goto",
+    "editor.gotoLocation.multipleImplementations": "goto",
+    "editor.gotoLocation.multipleDeclarations": "goto",
+    "editor.gotoLocation.multipleTypeDefinitions": "goto",
+    "editor.hover.delay": 500,
+    "breadcrumbs.enabled": false,
+    "explorer.openEditors.visible": 1,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "explorer.autoRevealExclude": { "**/node_modules": false },
+    "workbench.settings.enableNaturalLanguageSearch": false,
+    "workbench.tree.indent": 20,
+    "workbench.startupEditor": "none",
+    "workbench.editor.enablePreview": false,
+    "workbench.colorTheme": "Default Dark+",
+    "workbench.colorCustomizations": {
+        "editor.lineHighlightBackground": "#37373d"
+    },
+    "workbench.layoutControl.enabled": false,
+    "window.title": "${activeEditorMedium}",
+    "search.useIgnoreFiles": false,
+    "search.exclude": {
+        "**/*.{phar,gz}": true,
+        "**/composer.lock": true,
+        "**/node_modules": false,
+        "**/package-lock.json": true,
+        "tasks_fe/lh_*.html": true,
+        "tasks_be/docs/*.{html,json}": true,
+        "tasks_fe/dist/": true
+    },
+    "search.defaultViewMode": "tree",
+    "php.suggest.basic": false,
+    "css.lint.zeroUnits": "warning",
+    "intelephense.environment.phpVersion": "8.2",
+    "intelephense.stubs": ["Core", "curl", "mbstring", "date", "json", "openssl", "pcre", "PDO", "standard", "redis"],
+    "cssPeek.peekToExclude": ["**/node_modules/**", "**/dist/**"],
+    "html.format.indentInnerHtml": true,
+    "html.format.extraLiners": "",
+    "html.format.wrapLineLength": 140,
+    "html-validate.validate": ["html"],
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "[javascript]": {
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "biome.lspBin": "tasks_fe/tests/node_modules/.bin/biome"
+
+/* global settings
+    "workbench.enableExperiments": false,
+    "update.showReleaseNotes": false,
+    "update.mode": "none",
+    "extensions.autoUpdate": false,
+    "extensions.autoCheckUpdates": false,
+    "telemetry.telemetryLevel": "off",
+    "window.titleBarStyle": "custom"
+*/
+}

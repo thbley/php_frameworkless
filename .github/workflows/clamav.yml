@@ -1,0 +1,45 @@
+name: clamav
+
+on:
+  workflow_dispatch:
+  schedule:
+    # minute hour day_of_month month day_of_week
+    - cron: "0 10 * * 1"
+
+jobs:
+  build:
+    name: Run clamav
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check environment
+      run: docker version && docker compose version && docker images && cat /proc/cpuinfo && free && shopt -o pipefail
+
+    - name: Build containers
+      run: |
+        docker compose -f docker-compose-tasks-clam.yml -f docker-compose-tasks-be.yml -f docker-compose-tasks-fe.yml \
+          build --pull php npm clamav
+
+    - name: Run composer for src
+      run: docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer
+
+    - name: Run composer for tests
+      run: docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer_tests
+
+    - name: Run npm for frontend
+      run: docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm
+
+    - name: Run clamav
+      run: docker compose -f docker-compose-tasks-clam.yml run --rm clamav 2>&1 | tee /tmp/clamav
+
+    - name: Build Github step summary
+      run: |
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat /tmp/clamav | grep -E "Infected|Time|FOUND" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY

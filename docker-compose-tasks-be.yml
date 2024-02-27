@@ -1,0 +1,117 @@
+version: "3.2"
+
+include:
+  - docker-compose.yml
+
+services:
+  cli:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www/src/cli
+    entrypoint: php
+    volumes: [./tasks_be/:/var/www:ro]
+    networks: [backend]
+    links: [mysql, clickhouse, redis, mailpit]
+  composer:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: composer
+    command: install --no-scripts --no-plugins --no-cache --no-progress --ignore-platform-reqs
+    volumes: [./tasks_be/:/var/www]
+  composer_tests:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: composer
+    command: install --no-scripts --no-plugins --no-cache --no-progress --ignore-platform-reqs
+    volumes: [./tasks_be/tests/:/var/www]
+  psalm:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/vendor/bin/psalm --no-cache --show-info=true
+    volumes: [./tasks_be/:/var/www:ro]
+    network_mode: none
+  psalm_taint:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/vendor/bin/psalm --no-cache --taint-analysis
+    volumes: [./tasks_be/:/var/www:ro]
+    network_mode: none
+  phpstan:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: php -dmemory_limit=192M tests/vendor/bin/phpstan analyze --no-progress --ansi
+    volumes: [./tasks_be/:/var/www:ro]
+    network_mode: none
+  phpcsfixer:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/vendor/bin/php-cs-fixer fix --verbose --dry-run --diff --config phpcsfixer.conf
+    volumes: [./tasks_be/:/var/www:ro]
+    network_mode: none
+  rector:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/vendor/bin/rector process --dry-run
+    volumes: [./tasks_be/:/var/www:ro]
+    network_mode: none
+  phpunit:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: sh -c "
+      php -dextension=pcov.so tests/vendor/bin/phpunit --coverage-text --coverage-xml=/tmp/coverage
+      --coverage-html=/var/coverage/tasks --testsuite unit_integration --colors=always
+      && php tests/utils/coverage.php"
+    volumes: [coverage-data:/var/coverage, ./tasks_be/:/var/www:ro]
+    networks: [backend]
+    links: [nginx, php, mysql, clickhouse, redis, mailpit]
+  phpunit_feature:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/vendor/bin/phpunit --testdox --testsuite feature --colors=always
+    volumes: [./tasks_be/:/var/www:ro]
+    networks: [backend]
+    links: [nginx, php, mysql, clickhouse, redis, mailpit]
+  phpmd:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/vendor/bin/phpmd . text phpmd.xml --exclude src/vendor/,tests/vendor/,tests/data/
+    volumes: [./tasks_be/:/var/www:ro]
+    network_mode: none
+  apib2openapi:
+    build: ./docker/apib2openapi
+    image: example_tasks_apib2openapi
+    cap_drop: [all]
+    working_dir: /docs
+    command: -i api.md --prefer-reference --bearer-apikey --open-api-3 -o api_openapi.json
+    volumes: [./tasks_be/docs:/docs]
+    network_mode: none
+  apib2php:
+    image: example_tasks_php
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: php
+    command: |
+      -r "file_put_contents('tests/data/api_openapi.php',
+           sprintf('<?php' . PHP_EOL . 'return %s;',
+             var_export(json_decode(file_get_contents('docs/api_openapi.json'), true), true)
+         ));"
+    volumes: [./tasks_be/:/var/www]
+    network_mode: none
+  apib2html:
+    build: ./docker/apib2html
+    image: example_tasks_apib2html
+    cap_drop: [all]
+    working_dir: /docs
+    entrypoint: sh -c "blueprinter -i api.md -o api.html && gzip -f -9 api.html"
+    volumes: [./tasks_be/docs:/docs]
+    network_mode: none

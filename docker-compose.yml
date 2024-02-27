@@ -1,0 +1,135 @@
+version: "3.2"
+
+services:
+  php:
+    build: ./docker/php82
+    image: example_tasks_php
+    cap_drop: [all]
+    volumes:
+      - ./tasks_be/src:/var/www/tasks/src:ro
+    networks: [backend]
+    stop_grace_period: 30s
+    stop_signal: SIGQUIT
+    depends_on:
+      mysql:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: "php /var/www/tasks/src/cli/fpm_status.php"
+      interval: 5s
+      timeout: 1s
+      start_period: 30s
+      start_interval: 1s
+  nginx:
+    build: ./docker/nginx
+    image: example_tasks_nginx
+    cap_drop: [all]
+    ports: ["127.0.0.1:8080:8080", "127.0.0.1:443:443"]
+    volumes:
+      - coverage-data:/var/www/coverage:ro
+      - ./tasks_be/docs:/var/www/docs/tasks:ro
+      - ./tasks_fe/src/:/var/www/tasks:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/http.d/default.conf:ro
+    networks: [backend,internet]
+    restart: unless-stopped
+    healthcheck:
+      test: "wget -q -O- http://127.0.0.1:8080/status"
+      interval: 5s
+      timeout: 1s
+      start_period: 30s
+      start_interval: 1s
+  mysql:
+    build: ./docker/mysql80
+    image: example_tasks_mysql
+    cap_drop: [all]
+    cap_add: [sys_nice]
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql80/mysql.conf:/etc/mysql/conf.d/mysql.cnf:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tasks
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: tasks
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      test: "mysql -uroot -proot -e 'show tables from tasks'"
+      interval: 5s
+      timeout: 1s
+      start_period: 30s
+      start_interval: 1s
+  clickhouse:
+    build: ./docker/clickhouse
+    image: example_tasks_clickhouse
+    cap_drop: [all]
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./docker/clickhouse/config.xml:/etc/clickhouse-server/config.d/docker_related_config.xml:ro
+      - ./docker/clickhouse/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
+    environment:
+      CLICKHOUSE_DB: tasks
+      CLICKHOUSE_USER: root
+      CLICKHOUSE_PASSWORD: root
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ulimits:
+      nofile:
+        soft: "262144"
+        hard: "262144"
+    networks: [backend]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: "wget -q -O- http://127.0.0.1:8123/ping"
+      interval: 5s
+      timeout: 1s
+      start_period: 30s
+      start_interval: 1s
+  redis:
+    build: ./docker/redis
+    image: example_tasks_redis
+    cap_drop: [all]
+    volumes:
+      - redis-data:/var/lib/redis
+    environment:
+      REDISCLI_AUTH: default
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      test: "redis-cli ping"
+      interval: 5s
+      timeout: 1s
+      start_period: 30s
+      start_interval: 1s
+  mailpit:
+    build: docker/mailpit
+    image: example_tasks_mailpit
+    cap_drop: [all]
+    ports: ["127.0.0.1:8025:8025"]
+    networks: [backend,internet]
+    restart: unless-stopped
+    healthcheck:
+      test: "netstat -ln | grep 1025"
+      interval: 5s
+      timeout: 1s
+      start_period: 30s
+      start_interval: 1s
+
+networks:
+  backend:
+    driver: bridge
+    internal: true
+  internet:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  clickhouse-data:
+  redis-data:
+  coverage-data:

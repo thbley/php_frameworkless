@@ -1,0 +1,237 @@
+name: build
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    name: Tests - ${{ matrix.php-version }} ${{ matrix.mysql-version }}
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["php81", "php82", "php83", "phplatest"]
+        mysql-version: ["mysql80", "mysql82", "maria10", "maria11"]
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check environment
+      run: |
+        docker version && docker buildx version && docker compose version && docker images
+        cat /proc/cpuinfo && free && lsb_release -a && id
+        shopt -o pipefail
+
+    - name: Build versions
+      run: |
+        sed -i'.bak' 's/php82/${{ matrix.php-version }}/g' docker-compose.yml
+        sed -i'.bak' 's/mysql80/${{ matrix.mysql-version }}/g' docker-compose.yml
+        sed -i'.bak' 's/tasks_fe\/src/tasks_fe\/dist/' docker-compose.yml
+
+    - name: Build containers
+      run: |
+        docker compose -f docker-compose-tasks-be.yml -f docker-compose-tasks-fe.yml build --pull --parallel
+        docker images
+
+    - name: Start containers
+      run: docker compose up -d &
+
+    - name: Run composer for src and tests
+      run: |
+        docker compose -f docker-compose-tasks-be.yml run --rm composer validate --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer check-platform-reqs --no-cache
+        docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer
+        docker compose -f docker-compose-tasks-be.yml run --rm composer outdated --strict --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer audit
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests validate --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests check-platform-reqs --no-cache
+        docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer_tests
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests outdated --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests audit
+
+    - name: Run line length check, phpcsfixer, psalm, psalm taint, phpstan, rector, phpmd
+      run: |
+        bash -c "! grep --include=*.{php,sql} --exclude-dir=vendor -rn '.\{121\}' tasks_be"
+        docker compose -f docker-compose-tasks-be.yml run --rm phpcsfixer
+        docker compose -f docker-compose-tasks-be.yml run --rm psalm | tee /tmp/psalm
+        docker compose -f docker-compose-tasks-be.yml run --rm psalm_taint
+        docker compose -f docker-compose-tasks-be.yml run --rm phpstan
+        docker compose -f docker-compose-tasks-be.yml run --rm rector
+        docker compose -f docker-compose-tasks-be.yml run --rm phpmd
+
+    - name: Wait for mysql database to be ready
+      run: |
+        until docker compose exec -T mysql mysql -uroot -proot -e "select now()"; do echo "waiting..."; sleep 1; done
+        until docker compose exec -T mysql mysql -hclickhouse -uroot -proot -e "show database mysql_tasks"; do \
+          echo "waiting..."; sleep 1; done
+      timeout-minutes: 1
+
+    - name: Run update datebase
+      run: docker compose -f docker-compose-tasks-be.yml run --rm cli update_database.php
+
+    - name: Run phpunit unit + integration + feature
+      run: |
+        docker ps
+        docker compose -f docker-compose-tasks-be.yml run --rm phpunit | tee /tmp/phpunit
+        docker compose -f docker-compose-tasks-be.yml run --rm phpunit_feature
+
+    - name: Run npm ci for frontend src and tests
+      if: ${{ matrix.php-version != 'phplatest' }}
+      run: |
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm outdated || true
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm audit
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm_tests
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests outdated || true
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests audit
+
+    - name: Run line length check, biome, tsclint, htmlvalidate, esbuild
+      if: ${{ matrix.php-version != 'phplatest' }}
+      run: |
+        bash -c "! grep --include=*.{js,css} --exclude-dir=node_modules --exclude-dir=dist -rn '.\{121\}' tasks_fe"
+        docker compose -f docker-compose-tasks-fe.yml run --rm biome
+        docker compose -f docker-compose-tasks-fe.yml run --rm stylelint
+        docker compose -f docker-compose-tasks-fe.yml run --rm tsclint
+        docker compose -f docker-compose-tasks-fe.yml run --rm htmlvalidate
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm esbuild
+
+    - name: Run vitest unit + ssr
+      if: ${{ matrix.php-version != 'phplatest' }}
+      run: docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm vitest | tee /tmp/vitest
+
+    - name: Show php + composer library versions
+      run: |
+        docker compose -f docker-compose-tasks-be.yml run --rm cli -i | grep -Ei "version|information"
+        docker compose -f docker-compose-tasks-be.yml run --rm composer show
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests show
+
+    - name: Show node + npm library versions
+      if: ${{ matrix.php-version != 'phplatest' }}
+      run: |
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm version
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm list -a
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests list -a
+
+    - name: Show docker stats
+      run: docker stats --no-stream | tee /tmp/docker
+
+    - name: Build Github step summary
+      run: |
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat /tmp/psalm | grep types >> $GITHUB_STEP_SUMMARY
+        echo >> $GITHUB_STEP_SUMMARY
+        cat /tmp/phpunit | grep -E "^#" >> $GITHUB_STEP_SUMMARY
+        echo >> $GITHUB_STEP_SUMMARY
+        cat /tmp/vitest | grep -E "All files|src" >> $GITHUB_STEP_SUMMARY || true
+        cat /tmp/docker >> $GITHUB_STEP_SUMMARY
+        echo >> $GITHUB_STEP_SUMMARY
+        docker compose -f docker-compose-tasks-be.yml run --rm cli -v | grep built >> $GITHUB_STEP_SUMMARY
+        docker compose exec -T mysql mysql -uroot -proot -e "select version()" 2>/dev/null | \
+          tail -1 >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+
+  containers:
+    name: Tests - Trivy, Docker Scout, sslscan
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check environment
+      run: |
+        docker version && docker buildx version && docker compose version && docker images
+        cat /proc/cpuinfo && free && lsb_release -a && id
+        shopt -o pipefail
+    - name: Build containers
+      run: docker compose -f docker-compose-tasks-be.yml -f docker-compose-tasks-fe.yml build --pull --parallel
+    - name: Run trivy vulnerability + license scanner
+      run: |
+        URL=$(gh api '/repos/aquasecurity/trivy/releases?per_page=1' | \
+          jq -r '.[].assets[].browser_download_url | select(endswith("Linux-64bit.tar.gz"))')
+        wget -q -O- $URL | tar xz -C /tmp
+        /tmp/trivy -v
+        /tmp/trivy fs --no-progress --scanners vuln,config,secret --exit-code 1 ./
+        docker images | grep example_tasks | awk '{print $1}' | grep -Ev "mysql|clickhouse|html" | \
+          xargs -n1 /tmp/trivy image --scanners vuln --exit-code 1
+        /tmp/trivy fs --scanners license --license-full ./
+        /tmp/trivy image --scanners license example_tasks_php
+      env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    - name: Run docker scout vulnerability scanner
+      run: |
+        URL=$(gh api '/repos/docker/scout-cli/releases?per_page=1' | \
+          jq -r '.[].assets[].browser_download_url | select(endswith("linux_amd64.tar.gz"))')
+        mkdir -p $HOME/.docker/cli-plugins
+        wget -q -O- $URL | tar xz -C $HOME/.docker/cli-plugins/ docker-scout
+        echo ${{ secrets.DOCKER_PAT }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+        docker scout version | grep version
+        docker scout cves -e --locations fs://.
+        docker images | grep example_tasks | awk '{print $1}' | grep -Ev "mysql|clickhouse|html" | \
+          xargs -n1 docker scout cves --locations 2>/dev/null | grep -Eiv "What|recommend"
+      env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    - name: Run sslscan, test tls, self-signed certificate
+      run: |
+        docker compose up nginx -d &
+        sudo apt-get install -qq -y -o=Dpkg::Use-Pty=0 sslscan
+        true | openssl s_client -connect 127.0.0.1:443 -servername nginx 2>/dev/null | openssl x509 >/tmp/nginx.crt
+        sudo cp /tmp/nginx.crt /usr/local/share/ca-certificates/nginx.crt && sudo update-ca-certificates
+        curl --http2 --tlsv1.3 -sI https://127.0.0.1/tasks/ | grep -E "HTTP|security|policy"
+        sslscan --no-compression --ocsp --sni-name=nginx --show-times https://127.0.0.1
+
+  e2e:
+    name: Tests - Playwright, Lighthouse
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check environment
+      run: |
+        docker version && docker buildx version && docker compose version && docker images
+        cat /proc/cpuinfo && free && lsb_release -a && id
+        shopt -o pipefail
+    - name: Build versions
+      run: sed -i'.bak' 's/tasks_fe\/src/tasks_fe\/dist/' docker-compose.yml
+    - name: Build containers
+      run: |
+        docker compose -f docker-compose-tasks-e2e.yml -f docker-compose-tasks-be.yml -f docker-compose-tasks-fe.yml \
+          build --pull --parallel
+    - name: Start containers
+      run: docker compose up -d &
+    - name: Run composer for src and tests
+      run: |
+        docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer
+        docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer_tests
+    - name: Run npm ci for frontend src and tests
+      run: |
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm_tests
+    - name: Wait for mysql database to be ready
+      run: |
+        until docker compose exec -T mysql mysql -uroot -proot -e "select now()"; do echo "waiting..."; sleep 1; done
+        until docker compose exec -T mysql mysql -hclickhouse -uroot -proot -e "show database mysql_tasks"; do \
+          echo "waiting..."; sleep 1; done
+      timeout-minutes: 1
+    - name: Run update datebase
+      run: docker compose -f docker-compose-tasks-be.yml run --rm cli update_database.php
+    - name: Run esbuild
+      run: docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm esbuild
+    - name: Run playwright
+      run: docker compose -f docker-compose-tasks-e2e.yml run --rm playwright
+      timeout-minutes: 5
+    - name: Run lighthouse
+      run: docker compose -f docker-compose-tasks-e2e.yml run -u $(id -u) --rm lighthouse | tee /tmp/lighthouse
+      timeout-minutes: 5
+    - name: Build Github step summary
+      run: |
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat /tmp/lighthouse >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY

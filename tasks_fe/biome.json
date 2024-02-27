@@ -1,0 +1,48 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+    "files": {
+        "include": [
+            "**/*.js"
+        ],
+        "ignore": [
+            "**/dist/**",
+            "**/playwright-report/**"
+        ]
+    },
+    "organizeImports": {
+        "enabled": false
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "all": true,
+            "nursery": {
+                "useImportRestrictions": "off"
+            },
+            "style": {
+                "useSingleCaseStatement": "off"
+            },
+            "complexity": {
+                "useLiteralKeys": "off"
+            }
+        }
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "lineWidth": 120,
+        "indentWidth": 4
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "trailingComma": "none",
+            "bracketSpacing": true
+        }
+    },
+    "json": {
+        "formatter": {
+            "enabled": false
+        }
+    }
+}

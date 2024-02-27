@@ -1,0 +1,80 @@
+version: "3.2"
+
+include:
+  - docker-compose.yml
+
+services:
+  npm:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www/src
+    entrypoint: npm
+    command: ci --loglevel http --omit=optional
+    volumes: [./tasks_fe/:/var/www]
+  npm_tests:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www/tests
+    entrypoint: npm
+    command: ci --ignore-scripts --loglevel notice
+    volumes: [./tasks_fe/:/var/www]
+  biome:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/node_modules/.bin/biome check .
+    volumes: [./tasks_fe:/var/www:ro]
+    network_mode: none
+  stylelint:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/node_modules/.bin/stylelint 'src/**/*.css'
+    volumes: [./tasks_fe:/var/www:ro]
+    network_mode: none
+    environment:
+      NODE_PATH: tests/node_modules/
+  tsclint:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/node_modules/.bin/tsc
+    volumes: [./tasks_fe:/var/www:ro]
+    network_mode: none
+  htmlvalidate:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: tests/node_modules/.bin/html-validate ./src/
+    volumes: [./tasks_fe:/var/www:ro]
+    network_mode: none
+  esbuild:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: sh -c "
+      rm -rf dist/* \
+      && tests/node_modules/.bin/esbuild --bundle src/*.js src/*.css src/images/*.* --loader:.jpg=copy --analyze \
+        --platform=browser --target=es2020 --minify --format=esm --outdir=dist/ --define:globalThis.PROD=true \
+      && tests/node_modules/.bin/html-minifier-terser --collapse-whitespace --preserve-line-breaks --remove-comments \
+        --input-dir ./src/ --output-dir ./dist/ --file-ext html \
+      && ./dist_hash.sh \
+      && gzip -k -f -9 dist/*.js dist/*.css dist/*.html \
+      && stat -c '%n %s' src/*.html dist/*.gz dist/images/*"
+    volumes: [./tasks_fe:/var/www]
+    network_mode: none
+  vitest:
+    build: ./docker/npm
+    image: example_tasks_npm
+    cap_drop: [all]
+    working_dir: /var/www/tests
+    entrypoint: timeout -s kill 20 node_modules/.bin/vitest run
+    volumes: [./tasks_fe/:/var/www]
+    network_mode: none

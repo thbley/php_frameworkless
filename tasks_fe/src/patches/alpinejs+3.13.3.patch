@@ -1,0 +1,23 @@
+diff --git a/node_modules/alpinejs/dist/module.esm.js b/node_modules/alpinejs/dist/module.esm.js
+index fcfdf8b..87730a0 100644
+--- a/node_modules/alpinejs/dist/module.esm.js
++++ b/node_modules/alpinejs/dist/module.esm.js
+@@ -1069,7 +1069,7 @@ window.Element.prototype._x_toggleAndCascadeWithTransitions = function(el, value
+           let carry = Promise.all([
+             el2._x_hidePromise,
+             ...(el2._x_hideChildren || []).map(hideAfterChildren)
+-          ]).then(([i]) => i());
++          ]).then(([i]) => i && i());
+           delete el2._x_hidePromise;
+           delete el2._x_hideChildren;
+           return carry;
+@@ -3038,6 +3038,9 @@ directive("for", (el, { expression }, { effect: effect3, cleanup: cleanup2 }) =>
+   el._x_lookup = {};
+   effect3(() => loop(el, iteratorNames, evaluateItems, evaluateKey));
+   cleanup2(() => {
++    if (!el._x_lookup) {
++      return;
++    }
+     Object.values(el._x_lookup).forEach((el2) => el2.remove());
+     delete el._x_prevKeys;
+     delete el._x_lookup;

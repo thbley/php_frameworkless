@@ -1,0 +1,731 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Tasks PHP API",
+        "version": "1",
+        "description": "API for managing tasks."
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8080"
+        }
+    ],
+    "paths": {
+        "/v1/customers/login": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "token"
+                                    ],
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "token": ""
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "error"
+                                    ],
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "missing email",
+                                                "missing password"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "missing email"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Unauthorized"
+                                },
+                                "example": {
+                                    "error": "unauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                },
+                                "example": {
+                                    "error": "internal server error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "",
+                "operationId": "",
+                "description": "Create customer login token",
+                "tags": [
+                    "Login"
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "email": "",
+                                "password": ""
+                            },
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/tasks": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                },
+                                "example": {
+                                    "id": 0,
+                                    "title": "",
+                                    "duedate": "2023-01-02",
+                                    "completed": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "error"
+                                    ],
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "missing title",
+                                                "invalid duedate"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "missing title"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Unauthorized"
+                                },
+                                "example": {
+                                    "error": "unauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                },
+                                "example": {
+                                    "error": "internal server error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "",
+                "operationId": "",
+                "description": "Create a task",
+                "tags": [
+                    "Tasks"
+                ],
+                "parameters": [
+                    {
+                        "name": "+",
+                        "in": "header",
+                        "description": "e.g. Authorization: Bearer {token}",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Authorization: Bearer {token}"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "title": "",
+                                "duedate": ""
+                            },
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "title",
+                                    "duedate"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "duedate": {
+                                        "type": "string",
+                                        "description": "date, YYYY-mm-dd"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Task"
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "id": 0,
+                                        "title": "",
+                                        "duedate": "2023-01-02",
+                                        "completed": false
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Unauthorized"
+                                },
+                                "example": {
+                                    "error": "unauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                },
+                                "example": {
+                                    "error": "internal server error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "",
+                "operationId": "",
+                "description": "Get current or completed tasks",
+                "tags": [
+                    "Tasks"
+                ],
+                "parameters": [
+                    {
+                        "name": "completed",
+                        "in": "query",
+                        "description": "",
+                        "example": "1",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "0",
+                                "1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "e.g. Bearer {token}",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Bearer {token}"
+                    }
+                ]
+            }
+        },
+        "/v1/tasks/{taskId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                },
+                                "example": {
+                                    "id": 0,
+                                    "title": "",
+                                    "duedate": "2023-01-02",
+                                    "completed": false
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Unauthorized"
+                                },
+                                "example": {
+                                    "error": "unauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFound"
+                                },
+                                "example": {
+                                    "error": "task not found"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                },
+                                "example": {
+                                    "error": "internal server error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "",
+                "operationId": "",
+                "description": "Get single task",
+                "tags": [
+                    "Tasks"
+                ],
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "+",
+                        "in": "header",
+                        "description": "e.g. Authorization: Bearer {token}",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Authorization: Bearer {token}"
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                },
+                                "example": {
+                                    "id": 0,
+                                    "title": "",
+                                    "duedate": "2023-01-02",
+                                    "completed": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "error"
+                                    ],
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "enum": [
+                                                "missing title",
+                                                "invalid duedate"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "error": "missing title"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Unauthorized"
+                                },
+                                "example": {
+                                    "error": "unauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFound"
+                                },
+                                "example": {
+                                    "error": "task not found"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                },
+                                "example": {
+                                    "error": "internal server error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "",
+                "operationId": "",
+                "description": "Updates a task",
+                "tags": [
+                    "Tasks"
+                ],
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "+",
+                        "in": "header",
+                        "description": "e.g. Authorization: Bearer {token}",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Authorization: Bearer {token}"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "title": "",
+                                "duedate": "",
+                                "completed": false
+                            },
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "title",
+                                    "duedate",
+                                    "completed"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "duedate": {
+                                        "type": "string",
+                                        "description": "date, YYYY-mm-dd"
+                                    },
+                                    "completed": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Unauthorized"
+                                },
+                                "example": {
+                                    "error": "unauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFound"
+                                },
+                                "example": {
+                                    "error": "task not found"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                },
+                                "example": {
+                                    "error": "internal server error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "",
+                "operationId": "",
+                "description": "Delete a task",
+                "tags": [
+                    "Tasks"
+                ],
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "+",
+                        "in": "header",
+                        "description": "e.g. Authorization: Bearer {token}",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Authorization: Bearer {token}"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Task": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "title",
+                    "duedate",
+                    "completed"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "duedate": {
+                        "type": "string",
+                        "example": "2023-01-02",
+                        "description": "date, YYYY-mm-dd"
+                    },
+                    "completed": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "InternalServerError": {
+                "type": "object",
+                "required": [
+                    "error"
+                ],
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "enum": [
+                            "internal server error"
+                        ]
+                    }
+                }
+            },
+            "NotFound": {
+                "type": "object",
+                "required": [
+                    "error"
+                ],
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "enum": [
+                            "task not found"
+                        ]
+                    }
+                }
+            },
+            "Unauthorized": {
+                "type": "object",
+                "required": [
+                    "error"
+                ],
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "enum": [
+                            "unauthorized"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Login"
+        },
+        {
+            "name": "Tasks"
+        }
+    ]
+}

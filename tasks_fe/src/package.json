@@ -1,0 +1,16 @@
+{
+  "name": "php_frameworkless",
+  "version": "1.0.0",
+  "description": "PHP Frameworkless Micro Service Example",
+  "main": "./index.js",
+  "scripts": {
+    "postinstall": "cat patches/*.patch | patch -N -p1 -r- || true"
+  },
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@types/alpinejs": "^3",
+    "alpinejs": "^3",
+    "web-vitals": "^3"
+  }
+}

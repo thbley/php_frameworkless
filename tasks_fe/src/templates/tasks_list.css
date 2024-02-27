@@ -1,0 +1,48 @@
+.template-tasks {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th {
+        font-weight: bold;
+        text-align: left;
+        padding: 4px;
+        &:nth-child(2) {
+            width: 50%;
+        }
+        &:last-child {
+            text-align: right;
+        }
+    }
+    td {
+        padding: 4px;
+        &:last-child {
+            text-align: right;
+            height: 32px;
+        }
+    }
+    thead > tr {
+        background-color: #DDF;
+    }
+    tbody > tr {
+        &:nth-child(odd) {
+            background-color: #EEE;
+        }
+        &:hover {
+            background-color: #DDD;
+        }
+    }
+    a:link, a:visited {
+        color: inherit;
+    }
+    input {
+        height: 18px;
+        vertical-align: middle;
+        margin-bottom: 6px;
+    }
+    label {
+        display: inline-block;
+        padding-bottom: 6px;
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "extends": "stylelint-config-standard",
+  "reportDescriptionlessDisables": true,
+  "reportInvalidScopeDisables": true,
+  "reportNeedlessDisables": true,
+  "rules": {
+    "rule-empty-line-before": null
+  }
+}

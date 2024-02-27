@@ -1,0 +1,28 @@
+includes:
+  - tests/vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - tests/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+  - tests/vendor/phpstan/phpstan-phpunit/extension.neon
+parameters:
+  level: max
+  paths:
+    - src/
+    - tests/
+  excludePaths:
+    - src/vendor/
+    - tests/vendor/
+    - tests/data/
+  bootstrapFiles:
+    - src/vendor/autoload.php
+  ignoreErrors:
+    # PDO::ERRMODE_EXCEPTION is used by default
+    - message: '#Cannot call method \w+\(\) on PDOStatement\|false.#'
+      path: ./
+  checkFunctionNameCase: true
+  checkInternalClassCaseSensitivity: true
+  checkTooWideReturnTypesInProtectedAndPublicMethods: true
+  reportStaticMethodSignatures: true
+  reportMaybesInMethodSignatures: true
+  checkExplicitMixed: false
+  checkBenevolentUnionTypes: true
+  checkDynamicProperties: true
+  rememberPossiblyImpureFunctionValues: false

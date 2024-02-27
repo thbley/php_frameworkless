@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<psalm
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config config.xsd"
+    autoloader="src/vendor/autoload.php"
+    ignoreInternalFunctionNullReturn="false"
+    ignoreInternalFunctionFalseReturn="true"
+    findUnusedCode="true"
+    reportMixedIssues="true"
+    findUnusedPsalmSuppress="true"
+    findUnusedBaselineEntry="true"
+    inferPropertyTypesFromConstructor="false"
+    rememberPropertyAssignmentsAfterCall="false"
+    ensureArrayStringOffsetsExist="true"
+    ensureArrayIntOffsetsExist="true"
+    errorLevel="1"
+    cacheDirectory="/tmp/psalm"
+>
+    <projectFiles>
+        <directory name="src/" />
+        <directory name="tests/" />
+        <ignoreFiles>
+            <directory name="src/vendor" />
+            <directory name="tests/vendor" />
+            <file name="tests/unit/Framework/AppMock.php" /><!-- https://github.com/vimeo/psalm/issues/10152 -->
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <PropertyNotSetInConstructor errorLevel="suppress" />
+        <RiskyTruthyFalsyComparison errorLevel="suppress" />
+
+        <UnusedClass errorLevel="info">
+            <errorLevel type="suppress">
+                <directory name="tests/" />
+            </errorLevel>
+        </UnusedClass>
+    </issueHandlers>
+
+    <forbiddenFunctions>
+        <function name="die" />
+        <function name="eval" />
+        <function name="exec" />
+        <function name="highlight_file" />
+        <function name="passthru" />
+        <function name="pcntl_exec" />
+        <function name="popen" />
+        <function name="proc_open" />
+        <function name="shell_exec" />
+        <function name="system" />
+        <function name="dl" />
+        <function name="var_dump" />
+        <function name="var_export" />
+        <function name="print_r" />
+        <function name="rand" />
+        <function name="mt_rand" />
+        <function name="srand" />
+        <function name="mt_srand" />
+        <function name="unserialize" />
+        <function name="empty" />
+        <function name="assert" />
+    </forbiddenFunctions>
+</psalm>

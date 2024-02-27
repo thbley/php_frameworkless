@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="./src/vendor/autoload.php"
+         cacheResult="false"
+         colors="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+>
+  <testsuites>
+    <testsuite name="unit_integration">
+      <directory>./tests/unit</directory>
+      <directory>./tests/integration</directory>
+      <directory>./tests/performance</directory>
+    </testsuite>
+    <testsuite name="feature">
+      <directory>./tests/feature</directory>
+      <directory>./tests/performance</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <ini name="display_errors" value="On"/>
+    <ini name="display_startup_errors" value="On"/>
+  </php>
+  <source
+    ignoreSuppressionOfDeprecations="true"
+    ignoreSuppressionOfPhpDeprecations="true"
+    ignoreSuppressionOfNotices="true"
+    ignoreSuppressionOfPhpNotices="true"
+    ignoreSuppressionOfWarnings="true"
+  >
+    <!--used to test penssl_sign() ignoreSuppressionOfPhpWarnings="true"-->
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+    <exclude>
+      <directory>./src/cli</directory>
+      <directory>./src/vendor</directory>
+      <file>./src/index.php</file>
+      <file>./src/public.php</file>
+    </exclude>
+  </source>
+  <extensions>
+    <bootstrap class="Ergebnis\PHPUnit\SlowTestDetector\Extension">
+      <parameter name="maximum-count" value="10"/>
+      <parameter name="maximum-duration" value="50"/>
+    </bootstrap>
+  </extensions>
+</phpunit>

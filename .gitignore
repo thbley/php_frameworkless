@@ -1,0 +1,13 @@
+.*
+!.github
+!.gitignore
+!.gitlab-ci.yml
+!.vscode/
+!.stylelintrc.json
+!.htmlvalidate.json
+docker-compose.override.yml
+tasks_be/src/vendor/
+tasks_be/tests/vendor/
+tasks_fe/src/node_modules/
+tasks_fe/tests/node_modules/
+tasks_fe/dist/

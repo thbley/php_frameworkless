@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "bmewburn.vscode-intelephense-client", "actboy168.tasks", "biomejs.biome", "html-validate.vscode-html-validate",
+        "adrianwilczynski.alpine-js-intellisense", "pranaygp.vscode-css-peek", "stylelint.vscode-stylelint",
+        "ms-playwright.playwright"
+    ],
+}

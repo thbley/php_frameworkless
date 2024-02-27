@@ -1,0 +1,35 @@
+version: "3.2"
+
+include:
+  - docker-compose.yml
+
+services:
+  lighthouse:
+    build: ./docker/playwright
+    image: example_tasks_playwright
+    cap_drop: [all]
+    working_dir: /var/www
+    entrypoint: node tests/lighthouse/index-html.js
+    volumes: [./tasks_fe:/var/www]
+    networks: [backend]
+    links: [nginx, php, mysql, clickhouse, redis, mailpit]
+  playwright:
+    build: ./docker/playwright
+    image: example_tasks_playwright
+    cap_drop: [all]
+    working_dir: /var/www/tests
+    entrypoint: npx playwright test --reporter=list
+    volumes: [./tasks_fe:/var/www:ro]
+    networks: [backend]
+    links: [nginx, php, mysql, clickhouse, redis, mailpit]
+  playwright_ui:
+    build: ./docker/playwright
+    image: example_tasks_playwright
+    cap_drop: [all]
+    ports: ["127.0.0.1:8081:8081"]
+    working_dir: /var/www/tests
+    entrypoint: npx playwright test
+    command: --ui-host=0.0.0.0 --ui-port=8081
+    volumes: [./tasks_fe:/var/www:ro]
+    networks: [backend, internet]
+    links: [nginx, php, mysql, clickhouse, redis, mailpit]

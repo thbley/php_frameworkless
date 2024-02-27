@@ -1,0 +1,57 @@
+image: alpine:3.19
+
+variables:
+  GIT_DEPTH: 1
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  COMPOSE_DOCKER_CLI_BUILD: 0
+  IMAGES: "example_tasks_php example_tasks_mysql example_tasks_redis example_tasks_nginx example_tasks_mailpit"
+
+services:
+  - docker:stable-dind
+
+before_script:
+  - apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing -X http://dl-cdn.alpinelinux.org/alpine/edge/community trivy docker-cli docker-cli-compose grep
+  - mkdir -p -m 0777 tasks_be/src/vendor
+  - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  - for type in $IMAGES; do
+    time docker pull -q $CI_REGISTRY_IMAGE/$type:latest || true;
+    docker image tag $CI_REGISTRY_IMAGE/$type:latest $type:latest || true;
+    done
+  - docker version && docker compose version && docker images && cat /proc/cpuinfo && free
+# https://lipanski.com/posts/speed-up-your-docker-builds-with-cache-from
+  - docker build -t example_tasks_php --cache-from example_tasks_php docker/php82/
+  - docker build -t example_tasks_nginx --cache-from example_tasks_nginx docker/nginx/
+  - docker build -t example_tasks_mysql --cache-from example_tasks_mysql docker/mysql80/
+  - docker build -t example_tasks_redis --cache-from example_tasks_redis docker/redis/
+  - docker build -t example_tasks_mailpit --cache-from example_tasks_mailpit docker/mailpit/
+#  - time docker compose build --parallel
+  - docker compose up --quiet-pull -d mysql redis
+
+after_script:
+  - docker compose logs
+  - docker images
+  - for type in $IMAGES; do
+    docker image tag $type:latest $CI_REGISTRY_IMAGE/$type:latest;
+    time docker push -q $CI_REGISTRY_IMAGE/$type:latest;
+    done
+
+test:
+  script:
+    - trivy fs --security-checks vuln,config,secret --timeout 1m --exit-code 1 ./
+    - docker images | grep example_tasks | awk '{print $1}' | xargs -i trivy image --ignore-unfixed --exit-code 0 {}
+    - docker compose -f docker-compose-tasks-be.yml run --rm composer validate --no-cache
+    - docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer
+    - docker compose -f docker-compose-tasks-be.yml run --rm composer outdated --strict --no-cache
+    - sh -c '! grep --include="*.php" --exclude-dir=vendor -rn ".\{121\}" tasks'
+    - docker compose -f docker-compose-tasks-be.yml run --rm phpcsfixer
+    - docker compose -f docker-compose-tasks-be.yml run --rm psalm
+    - docker compose -f docker-compose-tasks-be.yml run --rm psalm_taint
+    - docker compose -f docker-compose-tasks-be.yml run --rm phpstan
+    - until docker compose exec -T mysql mysql -uroot -proot -e "select now()"; do echo "waiting..."; sleep 1; done
+    - docker compose -f docker-compose-tasks-be.yml run --rm cli update_database.php
+    - docker compose -f docker-compose-tasks-be.yml run --rm phpunit
+    - docker compose -f docker-compose-tasks-be.yml run --rm phpunit_feature
+  coverage: '/\s+Lines:\s+(\d+\.\d+)\%/'

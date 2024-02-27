@@ -1,0 +1,79 @@
+name: dependencies
+
+on:
+  workflow_dispatch:
+  schedule:
+    # minute hour day_of_month month day_of_week
+    - cron: "0 10 * * 1"
+
+jobs:
+  build:
+    name: Update dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check environment
+      run: docker version && docker compose version && docker images && cat /proc/cpuinfo && free && shopt -o pipefail
+
+    - name: Build containers
+      run: docker compose -f docker-compose-tasks-be.yml -f docker-compose-tasks-fe.yml build --pull php npm
+
+    - name: Run composer for src updates
+      run: |
+        docker compose -f docker-compose-tasks-be.yml run --rm composer validate --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer check-platform-reqs --no-cache
+        docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer update -o -a 2>&1 | \
+          tee /tmp/composer
+        docker compose -f docker-compose-tasks-be.yml run --rm composer outdated --strict --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer audit
+
+    - name: Run composer for tests updates
+      run: |
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests validate --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests check-platform-reqs --no-cache
+        docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer_tests update -o -a 2>&1 |
+          tee -a /tmp/composer
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests outdated --no-cache
+        docker compose -f docker-compose-tasks-be.yml run --rm composer_tests audit
+
+    - name: Run npm for frontend updates
+      run: |
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm update --ignore-scripts \
+          --loglevel http 2>&1 | tee /tmp/npm
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm outdated
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm audit
+
+    - name: Run npm for frontend tests updates
+      run: |
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm_tests update --ignore-scripts \
+          --loglevel notice 2>&1 | tee /tmp/npm
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests outdated
+        docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests audit
+
+    - name: Commit library and tooling updates as a new pull request
+      run: |
+        git config user.email github-actions@github.com
+        git config user.name github-actions
+        git diff .
+        git diff-index --exit-code HEAD && exit 0 || true
+        git status >> /tmp/composer
+        git checkout -b updates
+        git commit -m "update dependencies" tasks_be/composer.lock tasks_be/tests/composer.lock \
+          tasks_fe/src/package-lock.json tasks_fe/tests/package-lock.json
+        git push -f origin updates
+        cat /tmp/composer /tmp/npm | grep -E "Upgrading|Removing|Nothing|modified|tgz" | \
+          gh pr create -B master -H updates -t "updated dependencies" -a thbley -F -
+      env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Build Github step summary
+      run: |
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat /tmp/composer /tmp/npm | grep -E "Upgrading|Nothing|modified|tgz" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY

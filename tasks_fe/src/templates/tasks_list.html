@@ -1,0 +1,37 @@
+<div class="template-tasks fade-in" x-init="$app.tasksController.loadTasks()">
+    <label>
+        <input type="checkbox" name="completed" x-model="$app.tasksStore.completed" @change="$app.tasksController.loadTasks()">
+        Show completed
+    </label>
+
+    <table class="fade-in" x-show="$app.tasksStore.tasks.length > 0">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col" class="title">Title</th>
+                <th scope="col">Duedate</th>
+                <th scope="col">Completed</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <template x-for="task in $app.tasksStore.tasks" :key="task.id">
+                <tr>
+                    <td x-text="task.id"></td>
+                    <td x-text="task.title"></td>
+                    <td x-text="task.duedate"></td>
+                    <td x-text="task.completed"></td>
+                    <td>
+                        <a :href="`/tasks/edit/${task.id}`">edit</a>
+                        <a href="" @click.prevent="confirm('Really delete?') && $app.tasksController.deleteTask(task.id)">delete</a>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+    <div x-show="$app.tasksStore.tasks.length == 0 && !$app.tasksStore.loading">
+        No tasks, go to
+        <a href="/tasks/create">Create task</a>
+    </div>
+    <div x-show="$app.tasksStore.loading">Loading ...</div>
+</div>

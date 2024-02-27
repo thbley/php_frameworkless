@@ -1,0 +1,24 @@
+{
+  "name": "php_frameworkless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {},
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@axe-core/playwright": "^4.8.5",
+    "@biomejs/biome": "^1",
+    "@playwright/test": "^1",
+    "@types/node": "^20",
+    "@vitest/coverage-v8": "^1",
+    "esbuild": "^0",
+    "html-minifier-terser": "^7",
+    "html-validate": "^8",
+    "jsdom": "^24",
+    "lighthouse": "^11",
+    "stylelint-config-standard": "^36",
+    "typescript": "^5",
+    "vitest": "^1"
+  }
+}
