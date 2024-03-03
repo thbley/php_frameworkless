@@ -8,6 +8,7 @@
     "editor.gotoLocation.multipleDeclarations": "goto",
     "editor.gotoLocation.multipleTypeDefinitions": "goto",
     "editor.hover.delay": 500,
+    "editor.stickyScroll.enabled": false,
     "breadcrumbs.enabled": false,
     "explorer.openEditors.visible": 1,
     "files.trimTrailingWhitespace": true,
