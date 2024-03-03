@@ -306,6 +306,15 @@
                 ],
                 "parameters": [
                     {
+                        "name": "page",
+                        "in": "query",
+                        "description": "",
+                        "example": "1",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
                         "name": "completed",
                         "in": "query",
                         "description": "",

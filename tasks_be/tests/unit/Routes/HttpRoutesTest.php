@@ -28,7 +28,7 @@ final class HttpRoutesTest extends TestCase
         $task = new Task();
         $task->id = 0;
 
-        $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
+        $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), ['page' => '42']);
 
         $appMock->getAuthentication()->expects($this->once())
             ->method('getCustomer')
@@ -36,7 +36,7 @@ final class HttpRoutesTest extends TestCase
 
         $appMock->getTasksController()->expects($this->once())
             ->method('getCurrentTasks')
-            ->with($this->customer)
+            ->with($this->customer, 42)
             ->willReturn([$task]);
 
         $appMock->getTasksSerializer()->expects($this->once())
@@ -57,7 +57,8 @@ final class HttpRoutesTest extends TestCase
         $task = new Task();
         $task->id = 0;
 
-        $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), ['completed' => '1']);
+        $input = ['completed' => '1', 'page' => '42'];
+        $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), $input);
 
         $appMock->getAuthentication()->expects($this->once())
             ->method('getCustomer')
@@ -65,7 +66,7 @@ final class HttpRoutesTest extends TestCase
 
         $appMock->getTasksController()->expects($this->once())
             ->method('getCompletedTasks')
-            ->with($this->customer)
+            ->with($this->customer, 42)
             ->willReturn([$task]);
 
         $appMock->getTasksSerializer()->expects($this->once())

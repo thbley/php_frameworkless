@@ -437,6 +437,17 @@ return array (
         array (
           0 => 
           array (
+            'name' => 'page',
+            'in' => 'query',
+            'description' => '',
+            'example' => '1',
+            'schema' => 
+            array (
+              'type' => 'number',
+            ),
+          ),
+          1 => 
+          array (
             'name' => 'completed',
             'in' => 'query',
             'description' => '',
@@ -451,7 +462,7 @@ return array (
               ),
             ),
           ),
-          1 => 
+          2 => 
           array (
             'name' => 'Authorization',
             'in' => 'header',

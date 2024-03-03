@@ -58,6 +58,7 @@ Create a task
 Get current or completed tasks
 
 + Parameters
+    + page: `1` (number, optional)
     + completed: `1` (enum[string], optional)
         + Members
             + `0`

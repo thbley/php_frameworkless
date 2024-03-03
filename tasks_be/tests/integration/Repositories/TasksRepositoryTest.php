@@ -115,7 +115,7 @@ final class TasksRepositoryTest extends TestCase
 
         $tasksRepository->createTask($this->customer2, $this->task);
 
-        $actual = $tasksRepository->getCurrentTasks($this->customer);
+        $actual = $tasksRepository->getCurrentTasks($this->customer, 1);
 
         $this->assertCount(2, $actual);
         $this->assertEquals([$this->task, $this->task2], $actual);
@@ -130,7 +130,7 @@ final class TasksRepositoryTest extends TestCase
 
         $tasksRepository->updateTask($this->task);
 
-        $this->assertEquals([$this->task], $tasksRepository->getCompletedTasks($this->customer));
+        $this->assertEquals([$this->task], $tasksRepository->getCompletedTasks($this->customer, 1));
     }
 
     public function testDeleteTask(): void
@@ -155,7 +155,7 @@ final class TasksRepositoryTest extends TestCase
         $this->assertEquals([$this->task], $tasksRepository->getTasks([$this->task->id]));
 
         $this->assertSame([], $tasksRepository->getTasks([]));
-        $this->assertSame([], $tasksRepository->getTasks([42]));
+        $this->assertSame([], $tasksRepository->getTasks([0]));
     }
 
     public function testGetTasksFromQueue(): void

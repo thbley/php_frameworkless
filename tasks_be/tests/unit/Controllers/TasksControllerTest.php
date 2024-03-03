@@ -34,12 +34,12 @@ final class TasksControllerTest extends TestCase
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getCurrentTasks')
-            ->with($this->customer)
+            ->with($this->customer, 42)
             ->willReturn([$task]);
 
         $tasksController = new TasksController($this->appMock);
 
-        $this->assertSame([$task], $tasksController->getCurrentTasks($this->customer));
+        $this->assertSame([$task], $tasksController->getCurrentTasks($this->customer, 42));
     }
 
     public function testGetCompletedTasks(): void
@@ -49,12 +49,12 @@ final class TasksControllerTest extends TestCase
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getCompletedTasks')
-            ->with($this->customer)
+            ->with($this->customer, 42)
             ->willReturn([$task]);
 
         $tasksController = new TasksController($this->appMock);
 
-        $this->assertSame([$task], $tasksController->getCompletedTasks($this->customer));
+        $this->assertSame([$task], $tasksController->getCompletedTasks($this->customer, 42));
     }
 
     public function testGetTask(): void

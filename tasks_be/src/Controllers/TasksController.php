@@ -70,21 +70,21 @@ class TasksController
     /**
      * @return Task[]
      */
-    public function getCurrentTasks(Customer $customer): array
+    public function getCurrentTasks(Customer $customer, int $page): array
     {
         $tasksRepository = $this->app->getTasksRepository();
 
-        return $tasksRepository->getCurrentTasks($customer);
+        return $tasksRepository->getCurrentTasks($customer, $page);
     }
 
     /**
      * @return Task[]
      */
-    public function getCompletedTasks(Customer $customer): array
+    public function getCompletedTasks(Customer $customer, int $page): array
     {
         $tasksRepository = $this->app->getTasksRepository();
 
-        return $tasksRepository->getCompletedTasks($customer);
+        return $tasksRepository->getCompletedTasks($customer, $page);
     }
 
     public function getTask(Customer $customer, int $taskId): Task

@@ -60,9 +60,10 @@ class HttpRoutes
 
     private function getTasks(): void
     {
+        $page = max(1, (int) $this->app->getParam('page'));
         $tasks = (bool) $this->app->getParam('completed') ?
-            $this->app->getTasksController()->getCompletedTasks($this->customer) :
-            $this->app->getTasksController()->getCurrentTasks($this->customer);
+            $this->app->getTasksController()->getCompletedTasks($this->customer, $page) :
+            $this->app->getTasksController()->getCurrentTasks($this->customer, $page);
 
         $this->app->getOutput()->json($this->app->getTasksSerializer()->serializeTasks($tasks), 200, '');
     }

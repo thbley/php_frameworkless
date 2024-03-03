@@ -118,16 +118,16 @@ class TasksRepository
     /**
      * @return Task[]
      */
-    public function getCurrentTasks(Customer $customer): array
+    public function getCurrentTasks(Customer $customer, int $page): array
     {
         $database = $this->app->getDatabase();
 
-        $query = '
+        $query = sprintf('
             SELECT id, title, duedate, completed, last_updated_by FROM task
             WHERE customer_id = ? AND completed = 0 AND duedate < ?
             ORDER BY duedate, id
-            LIMIT 500
-        ';
+            LIMIT 100 OFFSET %s
+        ', ($page - 1) * 100);
         $statement = $database->prepare($query);
         $statement->execute([$customer->id, date('Y-m-d', strtotime('+1 week'))]);
 
@@ -137,16 +137,16 @@ class TasksRepository
     /**
      * @return Task[]
      */
-    public function getCompletedTasks(Customer $customer): array
+    public function getCompletedTasks(Customer $customer, int $page): array
     {
         $database = $this->app->getDatabase();
 
-        $query = '
+        $query = sprintf('
             SELECT id, title, duedate, completed, last_updated_by FROM task
             WHERE customer_id = ? AND completed = 1
             ORDER BY duedate DESC, id
-            LIMIT 500
-        ';
+            LIMIT 100 OFFSET %s
+        ', ($page - 1) * 100);
         $statement = $database->prepare($query);
         $statement->execute([$customer->id]);
 

@@ -115,6 +115,9 @@ final class TasksTest extends TestCase
 
         $actual = $this->curl('GET', '/v1/tasks', '/v1/tasks', [], 200);
         $this->assertContains($task, $actual);
+
+        $actual = $this->curl('GET', '/v1/tasks?page=2', '/v1/tasks', [], 200);
+        $this->assertSame([], $actual);
     }
 
     public function testGetCompletedTasks(): void
