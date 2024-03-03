@@ -42,14 +42,15 @@
         display: grid;
         grid-template-columns: 35% 30% 35%;
         .center {
-            text-align:center;
+            padding-top: 2px;
+            text-align: center;
         }
         .right {
-            text-align:right;
+            text-align: right;
             padding-bottom: 6px;
         }
         .disabled {
-            cursor: not-allowed;
+            cursor: inherit;
             opacity: 0.5;
         }
         a:visited, a:link {

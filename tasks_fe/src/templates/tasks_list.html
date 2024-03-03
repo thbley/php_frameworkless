@@ -1,12 +1,12 @@
 <div class="template-tasks fade-in" x-init="$app.tasksController.loadTasks(1)">
     <div class="template-tasks-paging">
         <div>
-            <a href="#" :class="$app.tasksStore.page <= 1 ? 'disabled' : ''"
-                @click.prevent.stop="if ($app.tasksStore.page > 1) $app.tasksController.loadTasks($app.tasksStore.page - 1)"
+            <a href="" :class="$app.tasksStore.page <= 1 ? 'disabled' : ''"
+                @click.prevent="if ($app.tasksStore.page > 1) $app.tasksController.loadTasks($app.tasksStore.page - 1)"
                 >◀</a>
             <span x-text="$app.tasksStore.page"></span>
-            <a href="#" :class="$app.tasksStore.tasks.length === 0 ? 'disabled' : ''"
-                @click.prevent.stop="if ($app.tasksStore.tasks.length !== 0) $app.tasksController.loadTasks($app.tasksStore.page + 1)"
+            <a href="" :class="$app.tasksStore.tasks.length === 0 ? 'disabled' : ''"
+                @click.prevent="if ($app.tasksStore.tasks.length !== 0) $app.tasksController.loadTasks($app.tasksStore.page + 1)"
                 >▶</a>
         </div>
 
