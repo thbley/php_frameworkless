@@ -58,6 +58,7 @@ jobs:
 
     - name: Commit library and tooling updates as a new pull request
       run: |
+        ls -lisa ~/.ssh/
         git config user.email github-actions@github.com
         git config user.name github-actions
         git config commit.gpgsign true
