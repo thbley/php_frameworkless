@@ -60,6 +60,8 @@ jobs:
       run: |
         git config user.email github-actions@github.com
         git config user.name github-actions
+        git config commit.gpgsign true
+        git config gpg.format ssh
         git diff .
         git diff-index --exit-code HEAD && exit 0 || true
         git status >> /tmp/composer
