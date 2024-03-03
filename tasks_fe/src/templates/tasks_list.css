@@ -22,6 +22,8 @@
         }
     }
     thead > tr {
+        position: sticky;
+        top: 0;
         background-color: #DDF;
     }
     tbody > tr {
