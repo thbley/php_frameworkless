@@ -36,8 +36,9 @@ PHP Frameworkless Micro Service Example
     psalm level 1, phpstan level max
     test code coverage >99.9%
     type coverage >99.9%
-    integrations tests must verify that data is persisted correctly in the database
+    integration tests must verify that data is persisted correctly in the database
     feature tests must validate requests and responses against the given OpenAPI schema
+    infrastructure tests should validate most critical configuration settings
     e2e tests should cover most important business processes
     automate all recurring development processes (application, infrastructure, security and performance testing)
 

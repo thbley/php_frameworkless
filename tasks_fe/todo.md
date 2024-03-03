@@ -10,3 +10,5 @@ Open TODOs
 - css/html format prettier?
 - i18n
 - add manual reload on fetch error?
+- add aria labels
+- add build time to dist/index.html
