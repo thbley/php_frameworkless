@@ -36,14 +36,14 @@ export class Router {
         if (event.detail === 2) {
             return;
         }
-        const route = this.app.router.matchRoute(href);
-
         history.pushState({ path: href }, '', href);
 
-        this.app.pageStore.route = ''; // unload page
+        const pageStore = this.app.pageStore;
+        pageStore.route = ''; // unload page
+
         // Alpine.nextTick
         setTimeout(() => {
-            this.app.pageStore.route = route;
+            pageStore.route = this.app.router.matchRoute(href);
         }, 0);
     }
 

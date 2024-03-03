@@ -3,8 +3,8 @@ Open TODOs
 
 - create form
 - edit form
-- paging for tasks list
 - responsive layout for tasks table
+- add dynamic task list page size
 - tasks table sorting
 - add docu
 - css/html format prettier?

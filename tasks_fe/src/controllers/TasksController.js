@@ -10,7 +10,10 @@ export class TasksController {
         this.app = app;
     }
 
-    async loadTasks() {
+    /**
+     * @param {number} page
+     */
+    async loadTasks(page) {
         const tasksStore = this.app.tasksStore;
         const pageStore = this.app.pageStore;
 
@@ -21,13 +24,11 @@ export class TasksController {
 
         tasksStore.loading = true;
 
-        // avoid memory leaks
-        tasksStore.tasks = [];
-
-        const tasks = await this.app.tasksService.getTasks(tasksStore.completed, pageStore.token);
+        const tasks = await this.app.tasksService.getTasks(page, tasksStore.completed, pageStore.token);
         if (tasks instanceof AppError) {
             pageStore.errors.push(tasks.error);
         } else {
+            tasksStore.page = page;
             tasksStore.tasks = tasks;
         }
 

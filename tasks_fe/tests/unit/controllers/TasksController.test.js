@@ -15,7 +15,7 @@ test.concurrent('test load tasks error', async () => {
 
     app.pageStore.token = 'insecure';
     app.tasksStore.completed = true;
-    await app.tasksController.loadTasks();
+    await app.tasksController.loadTasks(1);
     expect(app.pageStore.errors[0]).toContain('500 internal server error');
 });
 

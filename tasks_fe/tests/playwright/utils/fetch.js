@@ -9,10 +9,13 @@ export const emulateApiFetch = (route) => {
     let status = 200;
 
     switch (request) {
-        case 'GET https://nginx/v1/tasks':
+        case 'GET https://nginx/v1/tasks?page=1&completed=0':
             content = '[{"id":12345,"title":"Test Title 123","duedate":"2024-02-01","completed":false}]';
             break;
-        case 'GET https://nginx/v1/tasks?completed=1':
+        case 'GET https://nginx/v1/tasks?page=2&completed=0':
+            content = '[{"id":12347,"title":"Test Title 456","duedate":"2024-03-01","completed":false}]';
+            break;
+        case 'GET https://nginx/v1/tasks?page=1&completed=1':
             content = '[{"id":54321,"title":"Test Title completed","duedate":"2024-03-01","completed":true}]';
             break;
         case 'POST https://nginx/v1/customers/login': {

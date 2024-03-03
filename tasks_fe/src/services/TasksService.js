@@ -12,13 +12,13 @@ export class TasksService {
     }
 
     /**
+     * @param {number} page
      * @param {boolean} completed
      * @param {string} token
      * @returns {Promise<Task[] | AppError>}
      */
-    async getTasks(completed, token) {
-        const params = completed ? '?completed=1' : '';
-        const url = `/v1/tasks${params}`;
+    async getTasks(page, completed, token) {
+        const url = `/v1/tasks?page=${page}&completed=${Number(completed)}`;
 
         const options = { method: 'GET', headers: { Authorization: token } };
 

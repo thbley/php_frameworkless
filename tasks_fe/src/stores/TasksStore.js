@@ -7,6 +7,7 @@ export class TasksStore {
      */
     constructor() {
         this.loading = false;
+        this.page = 1;
         this.completed = false;
         /** @type {Task[]} */
         this.tasks = [];

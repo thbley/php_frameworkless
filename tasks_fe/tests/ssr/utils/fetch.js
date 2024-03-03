@@ -29,7 +29,7 @@ export const fetch = (url) => {
         case '/tasks/templates/404.html':
             content = readFileSync(`${path}/../../../src/templates/404.html`).toString();
             break;
-        case '/v1/tasks':
+        case '/v1/tasks?page=1&completed=0':
             content = '[{"id":12345,"title":"Test Title 123","duedate":"2024-02-01","completed":false}]';
             contentType = 'application/json';
             break;

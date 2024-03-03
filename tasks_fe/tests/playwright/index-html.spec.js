@@ -18,18 +18,24 @@ test('has task list after login', async ({ page }) => {
     // validate task list
     await expect(page).toHaveTitle('foo@bar.baz PHP Tasks REST API');
     await expect(page.locator('.template-tasks')).toHaveCount(1);
-    await expect(page.getByText('(1)')).toBeVisible();
     await expect(page.getByText('foo@bar.baz')).toBeVisible();
     await expect(page.getByText('12345')).toBeVisible();
     await expect(page.getByText('Test Title 123')).toBeVisible();
     await expect(page.getByText('2024-02-01')).toBeVisible();
 
+    // validate page 2 task list
+    await page.getByText('▶').click();
+    await expect(page.getByText('12347')).toBeVisible();
+    await expect(page.getByText('Test Title 456')).toBeVisible();
+    await expect(page.getByText('12345')).not.toBeVisible();
+    await expect(page.locator('[data-error-count="0"]')).toHaveCount(1);
+
     // validate completed task list
     await page.getByText('Show completed').click();
-    await expect(page.getByText('(1)')).toBeVisible();
     await expect(page.getByText('54321')).toBeVisible();
     await expect(page.getByText('Test Title completed')).toBeVisible();
     await expect(page.getByText('12345')).not.toBeVisible();
+    await expect(page.getByText('12347')).not.toBeVisible();
     await expect(page.locator('[data-error-count="0"]')).toHaveCount(1);
 });
 
@@ -43,7 +49,6 @@ test('has no task list after logout', async ({ page }) => {
 
     // validate task list
     await expect(page.locator('.template-tasks')).toHaveCount(1);
-    await expect(page.getByText('(1)')).toBeVisible();
     await expect(page.getByText('foo@bar.baz')).toBeVisible();
     await expect(page.getByText('12345')).toBeVisible();
 

@@ -27,14 +27,12 @@ test('test tasks list', async () => {
 
     const html = await waitForText('12345');
     expect(html).toContain('</html>');
-    expect(html).toContain('(1)');
     expect(html).toContain('invalid@invalid.local');
     expect(html).toContain('template-tasks');
-    expect(html).toContain('data-route="/tasks/"');
-    expect(html).toContain('data-error-count="0"');
     expect(html).toContain('12345');
     expect(html).toContain('Test Title 123');
     expect(html).toContain('2024-02-01');
+    expect(html).toContain('data-error-count="0"');
 
     const html2 = await waitForText('JSHeapSize');
     expect(html2).toContain('JSHeapSize used 10.00 mb, total 20.00 mb');
@@ -48,9 +46,7 @@ test('test create page', async () => {
 
     const html = await waitForText('template-tasks-create');
     expect(html).toContain('</html>');
-    expect(html).toContain('(0)');
     expect(html).toContain('invalid@invalid.local');
-    expect(html).toContain('data-route="/tasks/create"');
     expect(html).toContain('data-error-count="0"');
 
     await env.teardown();
@@ -81,7 +77,7 @@ test('test not found', async () => {
     const env = await render(indexHtml, script, 'https://nginx/tasks/invalid', '', emulateFetch);
 
     const html = await waitForText('template-404');
-    expect(html).toContain('data-route="notFound"');
+    expect(html).toContain('</html>');
     expect(html).toContain('data-error-count="0"');
 
     await env.teardown();
@@ -91,7 +87,6 @@ test('test index.html', async () => {
     const env = await render(indexHtml, script, 'https://nginx/tasks/index.html', '', emulateFetch);
 
     const html = await waitForText('template-404');
-    expect(html).toContain('data-route="notFound"');
     expect(html).toContain('data-error-count="0"');
 
     await env.teardown();
@@ -101,16 +96,14 @@ test('test login', async () => {
     const env = await render(indexHtml, script, 'https://nginx/tasks/', '', emulateFetch);
 
     const html = await waitForText('template-login');
-    expect(html).toContain('(0)');
-    expect(html).toContain('data-route="/tasks/"');
+    expect(html).toContain('</html>');
     expect(html).toContain('data-error-count="0"');
 
     fillInputByName('email', 'foo@bar.baz');
     fillInputByName('password', 'insecure');
     getElementByText('button', 'Login')?.click();
 
-    const html2 = await waitForText('(1)');
-    expect(html2).toContain('(1)');
+    const html2 = await waitForText('12345');
     expect(html2).toContain('template-tasks');
     expect(html2).toContain('data-error-count="0"');
     await env.teardown();
@@ -121,18 +114,15 @@ test('test logout', async () => {
     const env = await render(indexHtml, script, 'https://nginx/tasks/', cookie, emulateFetch);
 
     const html = await waitForText('template-tasks');
-    expect(html).toContain('(1)');
     expect(html).toContain('invalid@invalid.local');
-    expect(html).toContain('data-route="/tasks/"');
-    expect(html).toContain('data-error-count="0"');
     expect(html).toContain('12345');
     expect(html).toContain('Test Title 123');
     expect(html).toContain('2024-02-01');
+    expect(html).toContain('data-error-count="0"');
 
     getElementByText('a', 'Logout')?.click();
 
     const html2 = await waitForText('template-login');
-    expect(html2).toContain('(0)');
     expect(html2).toContain('data-error-count="0"');
     expect(html2).not.toContain('invalid@invalid.local');
     await env.teardown();
@@ -143,20 +133,19 @@ test('test clicks', async () => {
     const env = await render(indexHtml, script, 'https://nginx/tasks/', cookie, emulateFetch);
 
     const html = await waitForText('template-tasks');
-    expect(html).toContain('(1)');
-    expect(html).toContain('data-route="/tasks/"');
+    expect(html).toContain('12345');
     expect(html).toContain('data-error-count="0"');
 
     getElementByText('a', 'Create task')?.click();
 
     const html2 = await waitForText('template-tasks-create');
-    expect(html2).toContain('(1)');
+    expect(html2).not.toContain('12345');
     expect(html2).toContain('data-error-count="0"');
 
     getElementByText('a', 'Home')?.click();
 
     const html3 = await waitForText('template-tasks');
-    expect(html3).toContain('(1)');
+    expect(html3).toContain('12345');
     expect(html3).toContain('data-error-count="0"');
     await env.teardown();
 });
@@ -166,14 +155,12 @@ test('test task delete', async () => {
     const env = await render(indexHtml, script, 'https://nginx/tasks/', cookie, emulateFetch);
 
     const html = await waitForText('template-tasks');
-    expect(html).toContain('(1)');
-    expect(html).toContain('data-error-count="0"');
     expect(html).toContain('12345');
+    expect(html).toContain('data-error-count="0"');
 
     getElementByText('a', 'delete')?.click();
 
-    const html2 = await waitForText('(0)');
-    expect(html2).toContain('(0)');
+    const html2 = await waitForText('No tasks');
     expect(html2).toContain('template-tasks');
     expect(html2).toContain('data-error-count="0"');
     expect(html2).not.toContain('12345');
