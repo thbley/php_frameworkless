@@ -4,7 +4,7 @@ import { expect, test } from 'vitest';
 import { AppError } from '../../../src/models/AppError.js';
 import { appTest } from '../utils/app.js';
 
-test.concurrent('test get email', async () => {
+test.concurrent('test get email', () => {
     // emulate JWT token
     const token = `Bearer .${btoa(JSON.stringify({ email: 'invalid@invalid.local' }))}.`;
 
@@ -14,7 +14,7 @@ test.concurrent('test get email', async () => {
     expect(email).toEqual('invalid@invalid.local');
 });
 
-test.concurrent('test get email invalid token', async () => {
+test.concurrent('test get email invalid token', () => {
     const app = appTest('', fetch);
     const email = app.loginService.getEmail('Bearer ..');
 
@@ -22,7 +22,7 @@ test.concurrent('test get email invalid token', async () => {
     expect(email instanceof AppError ? email.error : '').toContain('SyntaxError: Unexpected end of JSON');
 });
 
-test.concurrent('test get email invalid token #2', async () => {
+test.concurrent('test get email invalid token #2', () => {
     const app = appTest('', fetch);
     const email = app.loginService.getEmail('Bearer foo bar');
 
@@ -30,7 +30,7 @@ test.concurrent('test get email invalid token #2', async () => {
     expect(email instanceof AppError ? email.error : '').toContain('SyntaxError: Unexpected end of JSON');
 });
 
-test.concurrent('test get email invalid token #3', async () => {
+test.concurrent('test get email invalid token #3', () => {
     const app = appTest('', fetch);
     const email = app.loginService.getEmail('Bearer .asd.');
 

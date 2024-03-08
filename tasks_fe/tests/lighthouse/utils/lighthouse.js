@@ -20,7 +20,7 @@ export const lightHouse = async (page, url, filename, mobile) => {
             disableFullPageScreenshot: true,
             onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
             maxWaitForLoad: 3000,
-            skipAudits: []
+            skipAudits: [],
         },
         {
             extends: 'lighthouse:default',
@@ -32,14 +32,14 @@ export const lightHouse = async (page, url, filename, mobile) => {
                     requestLatencyMs: 1,
                     downloadThroughputKbps: 100 * 1024,
                     uploadThroughputKbps: 50 * 1024,
-                    cpuSlowdownMultiplier: 0
+                    cpuSlowdownMultiplier: 0,
                 },
                 formFactor: mobile ? 'mobile' : 'desktop',
                 screenEmulation: mobile ? screenEmulationMetrics.mobile : screenEmulationMetrics.desktop,
-                emulatedUserAgent: mobile ? userAgents.mobile : userAgents.desktop
-            }
+                emulatedUserAgent: mobile ? userAgents.mobile : userAgents.desktop,
+            },
         },
-        page
+        page,
     );
     fs.writeFileSync(filename, String(result?.report));
 
@@ -70,7 +70,7 @@ export const formatOutput = (desktop, mobile) => {
         const id = key.padEnd(35);
 
         output.push(
-            `${id} ${getEmoji(desktopValue[0])} ${desktopValue[1]} ${getEmoji(mobileValue[0])} ${mobileValue[1]}`
+            `${id} ${getEmoji(desktopValue[0])} ${desktopValue[1]} ${getEmoji(mobileValue[0])} ${mobileValue[1]}`,
         );
     }
 

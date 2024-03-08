@@ -20,7 +20,7 @@ export class TasksService {
     async getTasks(page, completed, token) {
         const url = `/v1/tasks?page=${page}&completed=${Number(completed)}`;
 
-        const options = { method: 'GET', headers: { Authorization: token } };
+        const options = { method: 'GET', headers: { authorization: token } };
 
         const response = await this.app.fetchService.fetch(url, options, 5000);
         if (response.status !== 200 || response.error !== '') {
@@ -43,7 +43,7 @@ export class TasksService {
     async deleteTask(id, token) {
         const url = '/v1/tasks/'.concat(encodeURIComponent(id));
 
-        const options = { method: 'DELETE', headers: { Authorization: token } };
+        const options = { method: 'DELETE', headers: { authorization: token } };
 
         const response = await this.app.fetchService.fetch(url, options, 5000);
         if (response.status !== 204 || response.body !== '') {

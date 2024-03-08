@@ -3,7 +3,7 @@
 import { expect, test } from 'vitest';
 import { appTest } from '../utils/app.js';
 
-test.concurrent('test debug memory', async () => {
+test.concurrent('test debug memory', () => {
     const app = appTest('', fetch);
 
     app.debugController?.updateMemory(undefined);
@@ -13,7 +13,7 @@ test.concurrent('test debug memory', async () => {
     expect(app.pageStore.debugJsHeap).toBe('JSHeapSize used 1.18 mb, total 11.77 mb');
 });
 
-test.concurrent('test debug web vitals', async () => {
+test.concurrent('test debug web vitals', () => {
     const app = appTest('', fetch);
     app.debugController?.updateWebVitals({ name: 'test', delta: 42, value: 142.42 });
 

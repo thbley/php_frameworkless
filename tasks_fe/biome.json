@@ -17,16 +17,27 @@
         "rules": {
             "all": true,
             "nursery": {
-                "useImportRestrictions": "off"
-            },
-            "style": {
-                "useSingleCaseStatement": "off"
-            },
-            "complexity": {
-                "useLiteralKeys": "off"
+                "all": true,
+                "useImportRestrictions": "off",
+                "noEmptyBlockStatements": "off"
             }
         }
     },
+    "overrides": [{
+        "include": ["tests/**"],
+        "linter": {
+            "rules": {
+                "nursery": {
+                    "noNodejsModules": "off",
+                    "noEmptyBlockStatements": "off"
+                },
+                "style": {
+                    "noDefaultExport": "off",
+                    "useNamingConvention": "off"
+                }
+            }
+        }
+    }],
     "formatter": {
         "enabled": true,
         "indentStyle": "space",
@@ -36,7 +47,6 @@
     "javascript": {
         "formatter": {
             "quoteStyle": "single",
-            "trailingComma": "none",
             "bracketSpacing": true
         }
     },

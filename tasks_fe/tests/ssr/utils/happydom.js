@@ -31,7 +31,7 @@ export async function render(html, script, url, cookie, fetch) {
             // wait for window.setInterval
             await new Promise((resolve) => setTimeout(resolve, 10));
             await env.teardown(global);
-        }
+        },
     };
 }
 

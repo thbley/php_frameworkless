@@ -7,7 +7,7 @@ const browser = await puppeteer.launch({
     headless: true,
     executablePath: 'chrome',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
 });
 const tasksUrl = 'https://nginx/tasks/';
 const loginUrl = 'http://nginx:8080/v1/customers/login';

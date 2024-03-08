@@ -11,7 +11,7 @@ export default defineConfig({
             allowExternal: true,
             provider: 'v8',
             reporter: [['text', { maxCols: 120 }]],
-            exclude: ['**/tests/**']
-        }
-    }
+            exclude: ['**/tests/**'],
+        },
+    },
 });

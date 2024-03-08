@@ -3,7 +3,7 @@
 import { expect, test } from 'vitest';
 import { appTest } from '../utils/app.js';
 
-test.concurrent('test get cookie', async () => {
+test.concurrent('test get cookie', () => {
     const app = appTest('foo=bar; bar=baz', fetch);
 
     const foo = app.cookieService.getCookie('foo');
@@ -16,7 +16,7 @@ test.concurrent('test get cookie', async () => {
     expect(baz).toEqual('');
 });
 
-test.concurrent('test set cookie', async () => {
+test.concurrent('test set cookie', () => {
     const app = appTest('', fetch);
 
     const cookie = app.cookieService.setCookie('foo', 'bar', 600);

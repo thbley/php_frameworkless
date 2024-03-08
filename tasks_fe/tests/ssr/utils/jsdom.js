@@ -20,7 +20,7 @@ export async function render(html, script, url, cookie, fetch) {
     window.document.cookie = `${cookie}; Max-Age=60; path=/; SameSite=Strict`;
     window.performance.memory = { totalJSHeapSize: 10485760 * 2, usedJSHeapSize: 10485760 };
     // @ts-ignore
-    window.setInterval = (handler) => setTimeout(() => handler(), 10);
+    window.setInterval = (handler) => setTimeoutBackup(() => handler(), 10);
 
     // use system loader for code coverage, add timestamp to re-load module
     await import(`${script}?${Date.now()}`);
@@ -30,7 +30,7 @@ export async function render(html, script, url, cookie, fetch) {
             // wait for window.setInterval
             await new Promise((resolve) => setTimeout(resolve, 10));
             await env.teardown(global);
-        }
+        },
     };
 }
 

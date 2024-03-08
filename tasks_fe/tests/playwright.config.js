@@ -23,7 +23,7 @@ export default defineConfig({
         colorScheme: 'no-preference',
         trace: 'off',
         video: 'off',
-        screenshot: 'off'
+        screenshot: 'off',
     },
     expect: { timeout: 3000 },
     // see file://./node_modules/playwright-core/lib/server/deviceDescriptorsSource.json
@@ -35,6 +35,6 @@ export default defineConfig({
         { name: 'edge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
         { name: 'iphone', use: { ...devices['iPhone 14'] } },
         { name: 'ipad', use: { ...devices['iPad (gen 7)'] } },
-        { name: 'galaxy', use: { ...devices['Galaxy S9+'] } }
-    ]
+        { name: 'galaxy', use: { ...devices['Galaxy S9+'] } },
+    ],
 });
