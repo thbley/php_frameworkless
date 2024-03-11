@@ -18,7 +18,7 @@
         th {
             font-weight: bold;
             text-align: left;
-            padding: 4px;
+            padding: 10px 6px;
             &:nth-child(2) {
                 width: 50%;
             }
@@ -27,7 +27,7 @@
             }
         }
         td {
-            padding: 4px;
+            padding: 10px 6px;
             &:last-child {
                 text-align: right;
                 height: 32px;
@@ -41,13 +41,12 @@
         width: 100%;
         display: grid;
         grid-template-columns: 35% 30% 35%;
+        margin: 12px 0 10px 0;
         .center {
-            padding-top: 2px;
-            text-align: center;
+            justify-self: center;
         }
         .right {
-            text-align: right;
-            padding-bottom: 6px;
+            justify-self: end;
         }
         .disabled {
             cursor: inherit;
@@ -58,9 +57,9 @@
             text-decoration: none;
         }
         input {
-            height: 18px;
             vertical-align: middle;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            margin-right: 2px;
         }
         label {
             cursor: pointer;

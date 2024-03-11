@@ -6,13 +6,11 @@
 
     div {
         width: 150px;
-        box-sizing: border-box;
         padding: 4px;
     }
     input, button {
         width: 100%;
         height: 32px;
-        box-sizing: border-box;
         padding: 0 6px;
     }
     button {
