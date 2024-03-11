@@ -41,7 +41,7 @@
         width: 100%;
         display: grid;
         grid-template-columns: 35% 30% 35%;
-        margin: 12px 0 10px 0;
+        margin: 10px 0;
         .center {
             justify-self: center;
         }

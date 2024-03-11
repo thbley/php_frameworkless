@@ -20,9 +20,9 @@
                 </h1>
             </div>
             <nav class="navigation" x-show="$app.pageStore.loggedin" x-cloak>
-                <a href="/tasks/" :class="{active: $app.pageStore.route === '/tasks/'}">Home</a> |
-                <a href="/tasks/create" :class="{active: $app.pageStore.route === '/tasks/create' }">Create task</a> |
-                <span x-text="$app.pageStore.email"></span> |
+                <a href="/tasks/" :class="{active: $app.pageStore.route === '/tasks/'}">Home</a> ︱
+                <a href="/tasks/create" :class="{active: $app.pageStore.route === '/tasks/create' }">Create task</a> ︱
+                <span x-text="$app.pageStore.email"></span> ︱
                 <a href="" @click.prevent="$app.loginController.logout()">Logout</a>
             </nav>
         </header>

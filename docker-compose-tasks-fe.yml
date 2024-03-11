@@ -62,7 +62,8 @@ services:
     entrypoint: sh -c "
       rm -rf dist/* \
       && tests/node_modules/.bin/esbuild --bundle src/*.js src/*.css src/images/*.* --loader:.jpg=copy --analyze \
-        --platform=browser --target=es2020 --minify --format=esm --outdir=dist/ --define:globalThis.PROD=true \
+        --platform=browser --target=es2020 --minify --legal-comments=none --format=esm --outdir=dist/ \
+        --define:globalThis.PROD=true \
       && tests/node_modules/.bin/html-minifier-terser --collapse-whitespace --preserve-line-breaks --remove-comments \
         --input-dir ./src/ --output-dir ./dist/ --file-ext html \
       && ./dist_hash.sh \

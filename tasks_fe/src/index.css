@@ -11,6 +11,9 @@
     color: #444;
     overflow-y: scroll;
 }
+hr {
+    color: #FFF;
+}
 .error {
     background-color: #FCC;
     padding: 10px;
