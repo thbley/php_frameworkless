@@ -26,7 +26,7 @@ The frontend is written as an SPA in Typed JavaScript using ES Modules and Alpin
     docker compose -f docker-compose-tasks-be.yml run -u $(id -u) --rm composer_tests
 
     # setup npm
-    mkdir -m 0777 tasks_fe/src/node_modules
+    mkdir -m 0777 tasks_fe/src/node_modules tasks_fe/tests/node_modules
     chmod 0666 tasks_fe/src/package.json tasks_fe/src/package-lock.json tasks_fe/tests/package.json tasks_fe/tests/package-lock.json
     docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm
     docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm_tests
