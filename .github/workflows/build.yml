@@ -81,10 +81,10 @@ jobs:
     - name: Run npm ci for frontend src and tests
       if: ${{ matrix.php-version != 'phplatest' }}
       run: |
-        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm bun
         docker compose -f docker-compose-tasks-fe.yml run --rm npm outdated || true
         docker compose -f docker-compose-tasks-fe.yml run --rm npm audit
-        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm npm_tests
+        docker compose -f docker-compose-tasks-fe.yml run -u $(id -u) --rm bun_tests
         docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests outdated || true
         docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests audit
 
@@ -111,9 +111,12 @@ jobs:
     - name: Show node + npm library versions
       if: ${{ matrix.php-version != 'phplatest' }}
       run: |
-        docker compose -f docker-compose-tasks-fe.yml run --rm npm version
-        docker compose -f docker-compose-tasks-fe.yml run --rm npm list -a
-        docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests list -a
+        docker compose -f docker-compose-tasks-fe.yml run --rm bun --version
+        docker compose -f docker-compose-tasks-fe.yml run --rm bun ./bun.lockb | grep -E "^[^ ]+$" --no-group-separator -A1
+        docker compose -f docker-compose-tasks-fe.yml run --rm bun_tests ./bun.lockb | grep -E "^[^ ]+$" --no-group-separator -A1
+        #docker compose -f docker-compose-tasks-fe.yml run --rm npm version
+        #docker compose -f docker-compose-tasks-fe.yml run --rm npm list -a
+        #docker compose -f docker-compose-tasks-fe.yml run --rm npm_tests list -a
 
     - name: Show docker stats
       run: docker stats --no-stream | tee /tmp/docker
