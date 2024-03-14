@@ -181,7 +181,7 @@ jobs:
     - name: Run sslscan, test tls, self-signed certificate
       run: |
         docker compose up nginx -d &
-        sudo apt-get install -qq -y -o=Dpkg::Use-Pty=0 sslscan
+        sudo apt-get install -qq -y -o=Dpkg::Use-Pty=0 --no-install-recommends sslscan
         true | openssl s_client -connect 127.0.0.1:443 -servername nginx 2>/dev/null | openssl x509 >/tmp/nginx.crt
         sudo cp /tmp/nginx.crt /usr/local/share/ca-certificates/nginx.crt && sudo update-ca-certificates
         curl --http2 --tlsv1.3 -sI https://127.0.0.1/tasks/ | grep -E "HTTP|security|policy"
