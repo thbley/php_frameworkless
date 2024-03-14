@@ -10,7 +10,7 @@ services:
     cap_drop: [all]
     working_dir: /var/www/src
     entrypoint: yarn
-    command: install --ignore-optional --prod --cache-folder /tmp/yarn
+    command: install --ignore-optional --prod --cache-folder /tmp/yarn --network-concurrency 128 --no-default-rc --link-duplicates
     volumes: [./tasks_fe/:/var/www]
   npm_tests:
     build: ./docker/npm
@@ -18,7 +18,7 @@ services:
     cap_drop: [all]
     working_dir: /var/www/tests
     entrypoint: yarn
-    command: install --ignore-scripts --ignore-optional --prod --cache-folder /tmp/yarn
+    command: install --ignore-scripts --ignore-optional --prod --cache-folder /tmp/yarn --network-concurrency 128 --no-default-rc --link-duplicates
     volumes: [./tasks_fe/:/var/www]
   biome:
     build: ./docker/npm
