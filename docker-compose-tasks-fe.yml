@@ -9,16 +9,16 @@ services:
     image: example_tasks_npm
     cap_drop: [all]
     working_dir: /var/www/src
-    entrypoint: yarn
-    command: install --ignore-optional --prod --cache-folder /tmp/yarn --network-concurrency 128 --no-default-rc --link-duplicates
+    entrypoint: npm
+    command: ci --loglevel http --omit=optional
     volumes: [./tasks_fe/:/var/www]
   npm_tests:
     build: ./docker/npm
     image: example_tasks_npm
     cap_drop: [all]
     working_dir: /var/www/tests
-    entrypoint: yarn
-    command: install --ignore-scripts --ignore-optional --prod --cache-folder /tmp/yarn --network-concurrency 128 --no-default-rc --link-duplicates
+    entrypoint: npm
+    command: ci --ignore-scripts --loglevel notice
     volumes: [./tasks_fe/:/var/www]
   biome:
     build: ./docker/npm
