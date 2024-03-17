@@ -34,7 +34,7 @@ final class HttpPublicRoutesTest extends TestCase
 
     public function testLoginCustomerHttpException(): void
     {
-        $event = new Event('missing something', 400, 0, 'POST', '/v1/customers/login', '');
+        $event = new Event('missing something', 400, 0, 'POST', '/v1/customers/login');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('POST', '/v1/customers/login'), []);
 
@@ -59,7 +59,7 @@ final class HttpPublicRoutesTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('some error');
 
-        $event = new Event('some error', 0, 0, 'POST', '/v1/customers/login', '');
+        $event = new Event('some error', 0, 0, 'POST', '/v1/customers/login');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('POST', '/v1/customers/login'), []);
 

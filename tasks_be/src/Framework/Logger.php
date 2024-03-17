@@ -17,10 +17,15 @@ class Logger
             $status = 'WARNING';
         }
 
-        $data = get_object_vars($event);
-        $data['status'] = $status;
-        $data['datetime'] = date('c');
-
+        $data = [
+            'message' => $event->message,
+            'code' => $event->code,
+            'customer' => $event->customer,
+            'method' => $event->method,
+            'uri' => $event->uri,
+            'datetime' => date('c'),
+            'status' => $status,
+        ];
         file_put_contents($this->app->getConfig()->logfile, json_encode($data, 0) . PHP_EOL, FILE_APPEND);
     }
 }

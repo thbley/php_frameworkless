@@ -2,17 +2,13 @@
 
 namespace TaskService\Models;
 
-/**
- * @psalm-suppress PossiblyUnusedProperty
- */
-readonly class Event
+class Event
 {
     public function __construct(
-        public string $message,
-        public int $code,
-        public int $customer,
-        public string $method,
-        public string $uri,
-        public string $datetime
+        public readonly string $message,
+        public readonly int $code,
+        public readonly int $customer,
+        public readonly string $method,
+        public readonly string $uri
     ) {}
 }

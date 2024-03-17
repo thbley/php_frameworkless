@@ -44,8 +44,7 @@ class HttpRoutes
                 (int) $throwable->getCode(),
                 $this->customer->id ?? 0,
                 $app->getHeader('REQUEST_METHOD'),
-                $app->getHeader('DOCUMENT_URI'),
-                ''
+                $app->getHeader('DOCUMENT_URI')
             );
             $app->getLogger()->log($event, $event->code);
 

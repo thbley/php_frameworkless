@@ -15,7 +15,9 @@
 
     <rule ref="rulesets/design.xml" />
 
-    <rule ref="rulesets/controversial.xml" />
+    <rule ref="rulesets/controversial.xml">
+        <exclude name="CamelCaseParameterName" /><!-- constructor parameter promotion -->
+    </rule>
 
     <rule ref="rulesets/naming.xml">
         <exclude name="ShortVariable" />

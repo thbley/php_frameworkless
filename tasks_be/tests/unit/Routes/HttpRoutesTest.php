@@ -188,7 +188,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testTokenInvalidOrMissing(): void
     {
-        $event = new Event('unauthorized', 401, 0, 'GET', '/v1/tasks', '');
+        $event = new Event('unauthorized', 401, 0, 'GET', '/v1/tasks');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
 
@@ -210,7 +210,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testGetCurrentTasksHttpException(): void
     {
-        $event = new Event('missing something', 400, $this->customer->id, 'GET', '/v1/tasks', '');
+        $event = new Event('missing something', 400, $this->customer->id, 'GET', '/v1/tasks');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
 
@@ -239,7 +239,7 @@ final class HttpRoutesTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('some error');
 
-        $event = new Event('some error', 0, $this->customer->id, 'GET', '/v1/tasks', '');
+        $event = new Event('some error', 0, $this->customer->id, 'GET', '/v1/tasks');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
 
@@ -265,7 +265,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testNotFound(): void
     {
-        $event = new Event('not found', 404, $this->customer->id, '', '', '');
+        $event = new Event('not found', 404, $this->customer->id, '', '');
 
         $appMock = new AppMock($this->createMock(...), [], []);
 

@@ -2,14 +2,13 @@
 
 namespace TaskService\Models;
 
-/** @SuppressWarnings(PHPMD.CamelCasePropertyName) */
-readonly class Task
+class Task
 {
     public function __construct(
-        public int $id,
-        public string $title,
-        public string $duedate,
-        public bool $completed,
-        public string $last_updated_by
+        public readonly int $id,
+        public readonly string $title,
+        public readonly string $duedate,
+        public readonly bool $completed,
+        public readonly string $last_updated_by
     ) {}
 }
