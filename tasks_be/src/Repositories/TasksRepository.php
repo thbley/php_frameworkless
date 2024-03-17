@@ -110,6 +110,7 @@ class TasksRepository
 
     /**
      * @param mixed[][] $rows
+     *
      * @return Task[]
      */
     public function getTasksFromRows(array $rows): array
