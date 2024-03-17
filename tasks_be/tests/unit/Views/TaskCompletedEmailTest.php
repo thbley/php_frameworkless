@@ -13,10 +13,7 @@ final class TaskCompletedEmailTest extends TestCase
 {
     public function testRenderView(): void
     {
-        $task = new Task();
-        $task->id = 42;
-        $task->title = 'example title';
-        $task->last_updated_by = 'foo@invalid.local';
+        $task = new Task(42, 'example title', '2020-01-02', false, 'foo@invalid.local');
 
         $taskCompletedEmail = new TaskCompletedEmail();
         $taskCompletedEmail->task = $task;

@@ -33,7 +33,7 @@ final class RedisServiceTest extends TestCase
             ->willReturn('add');
 
         $redisService = new RedisService($this->appMock);
-        $redisService->addTaskToStream('test', new Task());
+        $redisService->addTaskToStream('test', new Task(42, 'test', '2020-01-02', false, ''));
     }
 
     public function testRemoveMessagesFromStreamXackException(): void

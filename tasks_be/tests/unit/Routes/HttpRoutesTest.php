@@ -24,8 +24,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testGetCurrentTasks(): void
     {
-        $task = new Task();
-        $task->id = 0;
+        $task = new Task(0, '', '', false, '');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), ['page' => '42']);
 
@@ -53,8 +52,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testGetCompletedTasks(): void
     {
-        $task = new Task();
-        $task->id = 0;
+        $task = new Task(0, '', '', false, '');
 
         $input = ['completed' => '1', 'page' => '42'];
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), $input);
@@ -102,8 +100,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testGetTask(): void
     {
-        $task = new Task();
-        $task->id = 0;
+        $task = new Task(0, '', '', false, '');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks/123'), []);
 
@@ -131,8 +128,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testCreateTask(): void
     {
-        $task = new Task();
-        $task->id = 42;
+        $task = new Task(0, '', '', false, '');
 
         $params = ['title' => 'Test', 'duedate' => '2020-05-22'];
 
@@ -162,11 +158,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testUpdateTask(): void
     {
-        $task = new Task();
-        $task->id = 123;
-        $task->title = 'Test';
-        $task->duedate = '2020-05-22';
-        $task->completed = true;
+        $task = new Task(123, 'Test', '2020-05-22', true, '');
 
         $params = ['title' => $task->title, 'duedate' => $task->duedate, 'completed' => (string) $task->completed];
 

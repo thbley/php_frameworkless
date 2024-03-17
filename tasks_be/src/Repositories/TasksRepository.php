@@ -21,14 +21,7 @@ class TasksRepository
 
     public function getTask(int $id, string $title, string $duedate, bool $completed, string $lastUpdatedBy): Task
     {
-        $task = new Task();
-        $task->id = $id;
-        $task->title = $title;
-        $task->duedate = $duedate;
-        $task->completed = $completed;
-        $task->last_updated_by = $lastUpdatedBy;
-
-        return $task;
+        return new Task($id, $title, $duedate, $completed, $lastUpdatedBy);
     }
 
     public function taskExists(Customer $customer, int $taskId): bool
@@ -42,7 +35,7 @@ class TasksRepository
         return $statement->fetchColumn(0) !== false;
     }
 
-    public function createTask(Customer $customer, Task $task): int
+    public function createTask(Customer $customer, Task $task): Task
     {
         $database = $this->app->getDatabase();
 
@@ -63,7 +56,7 @@ class TasksRepository
 
         $inTransaction || $database->commit();
 
-        return $id;
+        return $this->getTask($id, $task->title, $task->duedate, $task->completed, $task->last_updated_by);
     }
 
     public function updateTask(Task $task): void

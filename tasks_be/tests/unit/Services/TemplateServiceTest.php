@@ -15,9 +15,7 @@ final class TemplateServiceTest extends TestCase
 {
     public function testRender(): void
     {
-        $task = new Task();
-        $task->id = 41;
-        $task->title = 'some title';
+        $task = new Task(41, 'some title', '2020-01-02', false, '');
 
         $taskCompletedEmail = new TaskCompletedEmail();
         $taskCompletedEmail->subject = 'Task #41 completed';

@@ -27,8 +27,7 @@ final class TasksControllerTest extends TestCase
 
     public function testGetCurrentTasks(): void
     {
-        $task = new Task();
-        $task->id = 42;
+        $task = new Task(42, '', '', false, '');
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getCurrentTasks')
@@ -42,8 +41,7 @@ final class TasksControllerTest extends TestCase
 
     public function testGetCompletedTasks(): void
     {
-        $task = new Task();
-        $task->id = 42;
+        $task = new Task(42, '', '', false, '');
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getCompletedTasks')
@@ -57,8 +55,7 @@ final class TasksControllerTest extends TestCase
 
     public function testGetTask(): void
     {
-        $task = new Task();
-        $task->id = 42;
+        $task = new Task(42, '', '', false, '');
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('taskExists')
@@ -148,12 +145,7 @@ final class TasksControllerTest extends TestCase
 
     public function testCreateTask(): void
     {
-        $task = new Task();
-        $task->id = 0;
-        $task->title = 'Test';
-        $task->duedate = '2020-05-22';
-        $task->completed = false;
-        $task->last_updated_by = $this->customer->email;
+        $task = new Task(0, 'Test', '2020-05-22', false, $this->customer->email);
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getTask')
@@ -165,8 +157,7 @@ final class TasksControllerTest extends TestCase
             ->with($this->customer, $task)
             ->willReturn(42);
 
-        $task2 = clone $task;
-        $task2->id = 42;
+        $task2 = new Task(42, 'Test', '2020-05-22', false, $this->customer->email);
 
         $tasksController = new TasksController($this->appMock);
 
@@ -195,12 +186,7 @@ final class TasksControllerTest extends TestCase
 
     public function testUpdateTask(): void
     {
-        $task = new Task();
-        $task->id = 42;
-        $task->title = 'test';
-        $task->duedate = '2020-05-22';
-        $task->completed = true;
-        $task->last_updated_by = $this->customer->email;
+        $task = new Task(42, 'test', '2020-05-22', true, $this->customer->email);
 
         $taskCompletedEmail = new TaskCompletedEmail();
         $taskCompletedEmail->task = $task;
@@ -269,8 +255,7 @@ final class TasksControllerTest extends TestCase
 
     public function testProcessTasksFromQueue(): void
     {
-        $task = new Task();
-        $task->id = 42;
+        $task = new Task(42, '', '', false, '');
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getTasksFromQueue')
@@ -298,7 +283,10 @@ final class TasksControllerTest extends TestCase
 
     public function testProcessTasksFromStream(): void
     {
-        $expected = ['some-id' => new Task(), 'some-id-other' => new Task()];
+        $task = new Task(42, '', '', false, '');
+        $task2 = new Task(43, '', '', false, '');
+
+        $expected = ['some-id' => $task, 'some-id-other' => $task2];
 
         $group = $this->appMock->getConfig()->redisStreamGroup;
         $stream = $this->appMock->getConfig()->redisStreamTasks;

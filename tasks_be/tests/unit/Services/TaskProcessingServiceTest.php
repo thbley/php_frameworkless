@@ -15,33 +15,22 @@ final class TaskProcessingServiceTest extends TestCase
 {
     private AppMock $appMock;
 
-    private Task $task;
-
     protected function setUp(): void
     {
         $this->appMock = new AppMock($this->createMock(...), [], []);
-
-        $task = new Task();
-        $task->id = 42;
-        $task->title = 'test';
-        $task->duedate = '2020-05-22';
-        $task->completed = false;
-        $task->last_updated_by = 'foo@invalid.local';
-
-        $this->task = $task;
     }
 
     public function testProcessTaskUpdateCompleted(): void
     {
-        $this->task->completed = true;
+        $task = new Task(42, 'test', '2020-05-22', true, 'foo@invalid.local');
 
         $taskCompletedEmail = new TaskCompletedEmail();
-        $taskCompletedEmail->task = $this->task;
+        $taskCompletedEmail->task = $task;
 
         $email = new Email(
             'Task #42 completed',
             'Task Service <task.service@invalid.local>',
-            $this->task->last_updated_by,
+            $task->last_updated_by,
             'foo bar content'
         );
 
@@ -55,15 +44,17 @@ final class TaskProcessingServiceTest extends TestCase
             ->with($email);
 
         $taskProcessingService = new TaskProcessingService($this->appMock);
-        $taskProcessingService->processTaskUpdate($this->task);
+        $taskProcessingService->processTaskUpdate($task);
     }
 
     public function testProcessTaskUpdateUnCompleted(): void
     {
+        $task = new Task(42, 'test', '2020-05-22', false, 'foo@invalid.local');
+
         $this->appMock->getEmailService()->expects($this->never())
             ->method('send');
 
         $taskProcessingService = new TaskProcessingService($this->appMock);
-        $taskProcessingService->processTaskUpdate($this->task);
+        $taskProcessingService->processTaskUpdate($task);
     }
 }

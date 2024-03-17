@@ -21,8 +21,6 @@ final class TasksRepositoryTest extends TestCase
 
     private Task $task;
 
-    private Task $task2;
-
     protected function setUp(): void
     {
         $this->app = new App([], [], [], '');
@@ -32,19 +30,7 @@ final class TasksRepositoryTest extends TestCase
         $this->customer = new Customer(41, '', '');
         $this->customer2 = new Customer(42, '', '');
 
-        $this->task = new Task();
-        $this->task->id = 0;
-        $this->task->title = 'test';
-        $this->task->duedate = '2020-05-22';
-        $this->task->completed = false;
-        $this->task->last_updated_by = 'foo@invalid.local';
-
-        $this->task2 = new Task();
-        $this->task2->id = 0;
-        $this->task2->title = 'test2';
-        $this->task2->duedate = '2020-05-23';
-        $this->task2->completed = false;
-        $this->task2->last_updated_by = 'foo@invalid.local';
+        $this->task = new Task(0, 'test', '2020-05-22', false, 'foo@invalid.local');
     }
 
     protected function tearDown(): void
@@ -69,7 +55,9 @@ final class TasksRepositoryTest extends TestCase
     public function testGetTask(): void
     {
         $task = $this->app->getTasksRepository()->getTask(0, 'test', '2020-05-22', false, 'foo@invalid.local');
-        $this->assertEquals($this->task, $task);
+
+        $expected = new Task(0, 'test', '2020-05-22', false, 'foo@invalid.local');
+        $this->assertEquals($expected, $task);
     }
 
     public function testCreateTask(): void
@@ -98,8 +86,8 @@ final class TasksRepositoryTest extends TestCase
 
         $actual = $tasksRepository->createTask($this->customer, $this->task);
 
-        $this->assertTrue($tasksRepository->taskExists($this->customer, $actual));
-        $this->assertFalse($tasksRepository->taskExists($this->customer2, $actual));
+        $this->assertTrue($tasksRepository->taskExists($this->customer, $actual->id));
+        $this->assertFalse($tasksRepository->taskExists($this->customer2, $actual->id));
         $this->assertFalse($tasksRepository->taskExists($this->customer, 42));
     }
 
@@ -107,27 +95,31 @@ final class TasksRepositoryTest extends TestCase
     {
         $tasksRepository = $this->app->getTasksRepository();
 
-        $this->task->id = $tasksRepository->createTask($this->customer, $this->task);
-        $this->task2->id = $tasksRepository->createTask($this->customer, $this->task2);
+        $task = new Task(0, 'test', '2020-05-22', false, 'foo@invalid.local');
+        $task2 = new Task(0, 'test2', '2020-05-23', false, 'foo@invalid.local');
 
-        $tasksRepository->createTask($this->customer2, $this->task);
+        $tasksRepository->createTask($this->customer2, $task);
+
+        $taskCreated = $tasksRepository->createTask($this->customer, $task);
+
+        $taskCreated2 = $tasksRepository->createTask($this->customer, $task2);
 
         $actual = $tasksRepository->getCurrentTasks($this->customer, 1);
 
         $this->assertCount(2, $actual);
-        $this->assertEquals([$this->task, $this->task2], $actual);
+        $this->assertEquals([$taskCreated, $taskCreated2], $actual);
     }
 
     public function testGetCompletedTasks(): void
     {
         $tasksRepository = $this->app->getTasksRepository();
 
-        $this->task->id = $tasksRepository->createTask($this->customer, $this->task);
-        $this->task->completed = true;
+        $task = $tasksRepository->createTask($this->customer, $this->task);
 
-        $tasksRepository->updateTask($this->task);
+        $task2 = new Task($task->id, 'test', '2020-05-22', true, 'foo@invalid.local');
+        $tasksRepository->updateTask($task2);
 
-        $this->assertEquals([$this->task], $tasksRepository->getCompletedTasks($this->customer, 1));
+        $this->assertEquals([$task2], $tasksRepository->getCompletedTasks($this->customer, 1));
     }
 
     public function testDeleteTask(): void
@@ -136,20 +128,20 @@ final class TasksRepositoryTest extends TestCase
 
         $actual = $tasksRepository->createTask($this->customer, $this->task);
 
-        $this->assertTrue($tasksRepository->taskExists($this->customer, $actual));
+        $this->assertTrue($tasksRepository->taskExists($this->customer, $actual->id));
 
-        $tasksRepository->deleteTask($actual);
+        $tasksRepository->deleteTask($actual->id);
 
-        $this->assertFalse($tasksRepository->taskExists($this->customer, $actual));
+        $this->assertFalse($tasksRepository->taskExists($this->customer, $actual->id));
     }
 
     public function testGetTasks(): void
     {
         $tasksRepository = $this->app->getTasksRepository();
 
-        $this->task->id = $tasksRepository->createTask($this->customer, $this->task);
+        $task = $tasksRepository->createTask($this->customer, $this->task);
 
-        $this->assertEquals([$this->task], $tasksRepository->getTasks([$this->task->id]));
+        $this->assertEquals([$task], $tasksRepository->getTasks([$task->id]));
 
         $this->assertSame([], $tasksRepository->getTasks([]));
         $this->assertSame([], $tasksRepository->getTasks([0]));
@@ -159,13 +151,13 @@ final class TasksRepositoryTest extends TestCase
     {
         $tasksRepository = $this->app->getTasksRepository();
 
-        $this->task->id = $tasksRepository->createTask($this->customer, $this->task);
+        $task = $tasksRepository->createTask($this->customer, $this->task);
 
-        $this->assertTrue(in_array($this->task, $tasksRepository->getTasksFromQueue(), false));
+        $this->assertTrue(in_array($task, $tasksRepository->getTasksFromQueue(), false));
 
-        $tasksRepository->deleteTaskQueue($this->task->id);
+        $tasksRepository->deleteTaskQueue($task->id);
 
-        $this->assertFalse(in_array($this->task, $tasksRepository->getTasksFromQueue(), false));
+        $this->assertFalse(in_array($task, $tasksRepository->getTasksFromQueue(), false));
     }
 
     public function testCreateTaskQueue(): void
@@ -173,19 +165,19 @@ final class TasksRepositoryTest extends TestCase
         $database = $this->app->getDatabase();
         $tasksRepository = $this->app->getTasksRepository();
 
-        $this->task->id = $tasksRepository->createTask($this->customer, $this->task);
+        $task = $tasksRepository->createTask($this->customer, $this->task);
 
         $query = 'SELECT num_tries FROM task_queue WHERE task_id = ?';
 
-        $tasksRepository->updateTaskQueue($this->task->id);
+        $tasksRepository->updateTaskQueue($task->id);
 
         $statement = $database->prepare($query);
-        $statement->execute([$this->task->id]);
+        $statement->execute([$task->id]);
         $this->assertSame(1, $statement->fetchColumn(0));
 
-        $tasksRepository->updateTaskQueue($this->task->id);
+        $tasksRepository->updateTaskQueue($task->id);
         $statement = $database->prepare($query);
-        $statement->execute([$this->task->id]);
+        $statement->execute([$task->id]);
         $this->assertSame(2, $statement->fetchColumn(0));
     }
 
@@ -194,20 +186,20 @@ final class TasksRepositoryTest extends TestCase
         $database = $this->app->getDatabase();
         $tasksRepository = $this->app->getTasksRepository();
 
-        $this->task->id = 42;
-        $tasksRepository->updateTask($this->task);
+        $task = new Task(42, 'test', '2020-05-22', false, 'foo@invalid.local');
+        $tasksRepository->updateTask($task);
 
         $query = 'SELECT num_tries FROM task_queue WHERE task_id = ?';
 
-        $tasksRepository->updateTaskQueue($this->task->id);
+        $tasksRepository->updateTaskQueue(42);
 
         $statement = $database->prepare($query);
-        $statement->execute([$this->task->id]);
+        $statement->execute([42]);
         $this->assertSame(1, $statement->fetchColumn(0));
 
-        $tasksRepository->updateTaskQueue($this->task->id);
+        $tasksRepository->updateTaskQueue(42);
         $statement = $database->prepare($query);
-        $statement->execute([$this->task->id]);
+        $statement->execute([42]);
         $this->assertSame(2, $statement->fetchColumn(0));
     }
 
@@ -217,33 +209,33 @@ final class TasksRepositoryTest extends TestCase
         $tasksRepository = $this->app->getTasksRepository();
 
         $actual = $tasksRepository->createTask($this->customer, $this->task);
-        $tasksRepository->deleteTaskQueue($actual);
+        $tasksRepository->deleteTaskQueue($actual->id);
 
         $query = 'SELECT * FROM task_queue WHERE task_id = ?';
         $statement = $database->prepare($query);
-        $statement->execute([$actual]);
+        $statement->execute([$actual->id]);
         $this->assertFalse($statement->fetch(PDO::FETCH_ASSOC));
     }
 
     public function testImportTasksToClickHouse(): void
     {
-        $this->task->id = 42;
+        $task = new Task(42, 'test', '2020-05-22', false, 'foo@invalid.local');
 
         $clickHouse = $this->app->getClickHouse();
         $tasksRepository = $this->app->getTasksRepository();
 
         $query = 'DELETE FROM stream_tasks WHERE last_updated_by = ?';
-        $clickHouse->prepare($query)->execute([$this->task->last_updated_by]);
+        $clickHouse->prepare($query)->execute([$task->last_updated_by]);
 
-        $tasksRepository->importTasksToClickHouse([$this->task]);
+        $tasksRepository->importTasksToClickHouse([$task]);
 
         $query = 'SELECT count(*) FROM stream_tasks WHERE last_updated_by = ?';
         $statement = $clickHouse->prepare($query);
-        $statement->execute([$this->task->last_updated_by]);
+        $statement->execute([$task->last_updated_by]);
         $this->assertSame('1', $statement->fetchColumn(0));
 
         $query = 'DELETE FROM stream_tasks WHERE last_updated_by = ?';
-        $clickHouse->prepare($query)->execute([$this->task->last_updated_by]);
+        $clickHouse->prepare($query)->execute([$task->last_updated_by]);
     }
 
     public function testImportTasksToClickHouseEmpty(): void

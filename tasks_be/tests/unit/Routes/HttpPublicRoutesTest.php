@@ -8,7 +8,6 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use TaskService\Exceptions\HttpException;
 use TaskService\Models\Event;
-use TaskService\Models\Task;
 use TaskService\Routes\HttpPublicRoutes;
 use TaskService\Tests\Unit\Framework\AppMock;
 
@@ -16,12 +15,6 @@ final class HttpPublicRoutesTest extends TestCase
 {
     public function testLoginCustomer(): void
     {
-        $task = new Task();
-        $task->id = 123;
-        $task->title = 'Test';
-        $task->duedate = '2020-05-22';
-        $task->completed = true;
-
         $params = ['email' => 'foo@bar.baz', 'password' => 'insecure'];
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('POST', '/v1/customers/login'), $params);

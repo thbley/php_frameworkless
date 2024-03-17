@@ -12,11 +12,7 @@ final class TasksSerializerTest extends TestCase
 {
     public function testSerializeTasks(): void
     {
-        $task = new Task();
-        $task->id = 1234;
-        $task->title = 'test task';
-        $task->duedate = '2020-05-22';
-        $task->completed = false;
+        $task = new Task(1234, 'test task', '2020-05-22', false, '');
 
         $tasksSerializer = new TasksSerializer();
 

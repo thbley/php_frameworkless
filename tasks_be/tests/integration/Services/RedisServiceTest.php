@@ -23,8 +23,7 @@ final class RedisServiceTest extends TestCase
     {
         $stream = 'test_' . microtime(true);
 
-        $task = new Task();
-        $task->id = 42;
+        $task = new Task(42, 'test', '2020-01-02', false, '');
 
         $redis = $this->app->getRedis();
 

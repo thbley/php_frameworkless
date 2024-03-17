@@ -28,9 +28,7 @@ class TasksController
 
         $task = $tasksRepository->getTask(0, $title, $duedate, false, $customer->email);
 
-        $task->id = $tasksRepository->createTask($customer, $task);
-
-        return $task;
+        return $tasksRepository->createTask($customer, $task);
     }
 
     public function updateTask(Customer $customer, int $taskId, string $title, string $duedate, bool $completed): Task
