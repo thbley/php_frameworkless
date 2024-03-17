@@ -39,9 +39,7 @@ class CliRoutes
 
     private function generateToken(int $customerId, string $email): void
     {
-        $customer = new Customer();
-        $customer->id = $customerId;
-        $customer->email = $email;
+        $customer = new Customer($customerId, $email, '');
 
         $token = $this->app->getAuthentication()->getToken($customer, $this->app->getConfig()->privateKey);
 

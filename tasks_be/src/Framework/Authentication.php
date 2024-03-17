@@ -35,11 +35,7 @@ class Authentication
             return null;
         }
 
-        $customer = new Customer();
-        $customer->id = $subject;
-        $customer->email = $email;
-
-        return $customer;
+        return new Customer($subject, $email, '');
     }
 
     public function getToken(Customer $customer, #[SensitiveParameter] string $privateKey): string

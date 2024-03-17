@@ -38,11 +38,12 @@ final class TaskProcessingServiceTest extends TestCase
         $taskCompletedEmail = new TaskCompletedEmail();
         $taskCompletedEmail->task = $this->task;
 
-        $email = new Email();
-        $email->from = 'Task Service <task.service@invalid.local>';
-        $email->recipients = $this->task->last_updated_by;
-        $email->subject = 'Task #42 completed';
-        $email->content = 'foo bar content';
+        $email = new Email(
+            'Task #42 completed',
+            'Task Service <task.service@invalid.local>',
+            $this->task->last_updated_by,
+            'foo bar content'
+        );
 
         $this->appMock->getTemplateService()->expects($this->once())
             ->method('render')

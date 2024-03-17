@@ -29,11 +29,8 @@ final class TasksRepositoryTest extends TestCase
 
         $this->app->getDatabase()->beginTransaction();
 
-        $this->customer = new Customer();
-        $this->customer->id = 41;
-
-        $this->customer2 = new Customer();
-        $this->customer2->id = 42;
+        $this->customer = new Customer(41, '', '');
+        $this->customer2 = new Customer(42, '', '');
 
         $this->task = new Task();
         $this->task->id = 0;

@@ -17,11 +17,12 @@ class TaskProcessingService
             $taskCompletedEmail = new TaskCompletedEmail();
             $taskCompletedEmail->task = $task;
 
-            $email = new Email();
-            $email->subject = sprintf($taskCompletedEmail->subject, $task->id);
-            $email->from = $taskCompletedEmail->from;
-            $email->recipients = $task->last_updated_by;
-            $email->content = $this->app->getTemplateService()->render($taskCompletedEmail);
+            $email = new Email(
+                sprintf($taskCompletedEmail->subject, $task->id),
+                $taskCompletedEmail->from,
+                $task->last_updated_by,
+                $this->app->getTemplateService()->render($taskCompletedEmail)
+            );
 
             $this->app->getEmailService()->send($email);
         }

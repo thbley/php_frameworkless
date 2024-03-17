@@ -19,8 +19,7 @@ final class HttpRoutesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customer = new Customer();
-        $this->customer->id = 42;
+        $this->customer = new Customer(42, '', '');
     }
 
     public function testGetCurrentTasks(): void

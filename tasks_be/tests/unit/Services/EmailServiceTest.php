@@ -16,11 +16,12 @@ final class EmailServiceTest extends TestCase
     {
         ServiceMocks::$mailReturn = true;
 
-        $email = new Email();
-        $email->subject = 'Task #41 completed';
-        $email->from = 'foo.sender@invalid.local';
-        $email->recipients = 'foo.receiver@invalid.local';
-        $email->content = 'Subject: Task #41 completed';
+        $email = new Email(
+            'Task #41 completed',
+            'foo.sender@invalid.local',
+            'foo.receiver@invalid.local',
+            'Subject: Task #41 completed'
+        );
 
         $emailService = new EmailService();
         $emailService->send($email);
@@ -41,8 +42,7 @@ final class EmailServiceTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('missing content');
 
-        $email = new Email();
-        $email->content = '';
+        $email = new Email('Task #41 completed', 'foo.sender@invalid.local', 'foo.receiver@invalid.local', '');
 
         $emailService = new EmailService();
         $emailService->send($email);
@@ -58,12 +58,7 @@ final class EmailServiceTest extends TestCase
         try {
             ServiceMocks::$mailReturn = false;
 
-            $email = new Email();
-            $email->subject = 'test';
-            $email->from = 'foo@invalid.local';
-            $email->recipients = 'bar@invalid.local';
-            $email->content = 'foo';
-
+            $email = new Email('test', 'foo@invalid.local', 'bar@invalid.local', 'foo');
             $emailService = new EmailService();
             $emailService->send($email);
         } finally {

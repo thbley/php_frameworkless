@@ -20,12 +20,10 @@ final class TasksTest extends TestCase
 
     protected function setUp(): void
     {
-        $customer = new Customer();
-        $customer->id = 42;
-        $customer->email = 'foo.bar@invalid.local';
-
         $config = new Config();
         $authentication = new Authentication();
+        $customer = new Customer(42, 'foo.bar@invalid.local', '');
+
         $this->authorization = $authentication->getToken($customer, $config->privateKey);
     }
 

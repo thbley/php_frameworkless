@@ -2,11 +2,11 @@
 
 namespace TaskService\Models;
 
-class Customer
+readonly class Customer
 {
-    public int $id;
-
-    public string $email;
-
-    public string $password;
+    public function __construct(
+        public int $id,
+        public string $email,
+        public string $password
+    ) {}
 }

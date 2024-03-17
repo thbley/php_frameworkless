@@ -2,13 +2,12 @@
 
 namespace TaskService\Models;
 
-class Email
+readonly class Email
 {
-    public string $subject;
-
-    public string $from;
-
-    public string $recipients;
-
-    public string $content;
+    public function __construct(
+        public string $subject,
+        public string $from,
+        public string $recipients,
+        public string $content
+    ) {}
 }

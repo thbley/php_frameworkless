@@ -22,9 +22,7 @@ final class TasksControllerTest extends TestCase
     {
         $this->appMock = new AppMock($this->createMock(...), [], []);
 
-        $this->customer = new Customer();
-        $this->customer->id = 41;
-        $this->customer->email = 'foo@invalid.local';
+        $this->customer = new Customer(41, 'foo@invalid.local', '');
     }
 
     public function testGetCurrentTasks(): void
