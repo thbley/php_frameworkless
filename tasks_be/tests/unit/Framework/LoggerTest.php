@@ -17,8 +17,7 @@ final class LoggerTest extends TestCase
         $appMock = new AppMock($this->createMock(...), [], []);
         $appMock->getConfig()->logfile = $logfile;
 
-        $event = new Event();
-        $event->message = 'value';
+        $event = new Event('value', 0, 0, '', '', '');
 
         $logger = new Logger($appMock);
         $logger->log($event, 200);
@@ -40,8 +39,7 @@ final class LoggerTest extends TestCase
         $appMock = new AppMock($this->createMock(...), [], []);
         $appMock->getConfig()->logfile = $logfile;
 
-        $event = new Event();
-        $event->message = 'value';
+        $event = new Event('value', 0, 0, '', '', '');
 
         $logger = new Logger($appMock);
         $logger->log($event, 404);
@@ -59,8 +57,7 @@ final class LoggerTest extends TestCase
         $appMock = new AppMock($this->createMock(...), [], []);
         $appMock->getConfig()->logfile = $logfile;
 
-        $event = new Event();
-        $event->message = 'value';
+        $event = new Event('value', 0, 0, '', '', '');
 
         $logger = new Logger($appMock);
         $logger->log($event, 500);

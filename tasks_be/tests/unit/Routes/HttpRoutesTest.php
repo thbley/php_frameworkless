@@ -188,12 +188,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testTokenInvalidOrMissing(): void
     {
-        $event = new Event();
-        $event->message = 'unauthorized';
-        $event->code = 401;
-        $event->customer = 0;
-        $event->method = 'GET';
-        $event->uri = '/v1/tasks';
+        $event = new Event('unauthorized', 401, 0, 'GET', '/v1/tasks', '');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
 
@@ -215,12 +210,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testGetCurrentTasksHttpException(): void
     {
-        $event = new Event();
-        $event->message = 'missing something';
-        $event->code = 400;
-        $event->customer = $this->customer->id;
-        $event->method = 'GET';
-        $event->uri = '/v1/tasks';
+        $event = new Event('missing something', 400, $this->customer->id, 'GET', '/v1/tasks', '');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
 
@@ -249,12 +239,7 @@ final class HttpRoutesTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('some error');
 
-        $event = new Event();
-        $event->message = 'some error';
-        $event->code = 0;
-        $event->customer = $this->customer->id;
-        $event->method = 'GET';
-        $event->uri = '/v1/tasks';
+        $event = new Event('some error', 0, $this->customer->id, 'GET', '/v1/tasks', '');
 
         $appMock = new AppMock($this->createMock(...), $this->getHeaders('GET', '/v1/tasks'), []);
 
@@ -280,12 +265,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testNotFound(): void
     {
-        $event = new Event();
-        $event->message = 'not found';
-        $event->code = 404;
-        $event->customer = $this->customer->id;
-        $event->method = '';
-        $event->uri = '';
+        $event = new Event('not found', 404, $this->customer->id, '', '', '');
 
         $appMock = new AppMock($this->createMock(...), [], []);
 

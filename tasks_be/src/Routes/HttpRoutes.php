@@ -39,13 +39,14 @@ class HttpRoutes
 
             $router->match($app->getHeader('REQUEST_METHOD'), $app->getHeader('DOCUMENT_URI'));
         } catch (Throwable $throwable) {
-            $event = new Event();
-            $event->message = $throwable->getMessage();
-            $event->code = (int) $throwable->getCode();
-            $event->customer = $this->customer->id ?? 0;
-            $event->method = $app->getHeader('REQUEST_METHOD');
-            $event->uri = $app->getHeader('DOCUMENT_URI');
-
+            $event = new Event(
+                $throwable->getMessage(),
+                (int) $throwable->getCode(),
+                $this->customer->id ?? 0,
+                $app->getHeader('REQUEST_METHOD'),
+                $app->getHeader('DOCUMENT_URI'),
+                ''
+            );
             $app->getLogger()->log($event, $event->code);
 
             if (!$throwable instanceof HttpException) {
