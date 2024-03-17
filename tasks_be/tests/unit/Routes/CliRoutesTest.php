@@ -41,7 +41,7 @@ final class CliRoutesTest extends TestCase
 
     public function testRunGenerateToken(): void
     {
-        $customer = new Customer(12345, 'foo@invalid.local', '');
+        $customer = new Customer(12345, 'foo@invalid.local');
 
         $argv = ['generate_token.php', '12345', 'foo@invalid.local'];
         $appMock = new AppMock($this->createMock(...), ['argv' => $argv], []);

@@ -21,7 +21,7 @@ final class CustomersControllerTest extends TestCase
 
     public function testGetLoginToken(): void
     {
-        $customer = new Customer(41, '', '');
+        $customer = new Customer(41, '');
 
         $this->appMock->getRateLimitService()->expects($this->once())
             ->method('isLoginBlocked')

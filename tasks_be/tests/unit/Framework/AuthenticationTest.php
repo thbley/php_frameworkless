@@ -30,7 +30,7 @@ final class AuthenticationTest extends TestCase
     public function testGetToken(): void
     {
         $config = new Config();
-        $customer = new Customer(42, 'foo.bar@invalid.local', '');
+        $customer = new Customer(42, 'foo.bar@invalid.local');
 
         $authentication = new Authentication();
         $token = $authentication->getToken($customer, $config->privateKey);
@@ -56,7 +56,7 @@ final class AuthenticationTest extends TestCase
     {
         $config = new Config();
         $authentication = new Authentication();
-        $customer = new Customer(42, 'foo.bar@invalid.local', '');
+        $customer = new Customer(42, 'foo.bar@invalid.local');
 
         $token = $authentication->getToken($customer, $config->privateKey);
 
@@ -70,7 +70,7 @@ final class AuthenticationTest extends TestCase
     {
         $config = new Config();
         $authentication = new Authentication();
-        $customer = new Customer(0, 'foo.bar@invalid.local', '');
+        $customer = new Customer(0, 'foo.bar@invalid.local');
 
         $actual = $authentication->getCustomer('foo', $config->publicKey);
         $this->assertNull($actual);
@@ -90,7 +90,7 @@ final class AuthenticationTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('signing failed');
 
-        $customer = new Customer(42, 'foo.bar@invalid.local', '');
+        $customer = new Customer(42, 'foo.bar@invalid.local');
 
         $authentication = new Authentication();
         @$authentication->getToken($customer, '');

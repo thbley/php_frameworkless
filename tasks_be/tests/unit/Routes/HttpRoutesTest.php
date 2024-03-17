@@ -19,7 +19,7 @@ final class HttpRoutesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customer = new Customer(42, '', '');
+        $this->customer = new Customer(42, '');
     }
 
     public function testGetCurrentTasks(): void
@@ -128,7 +128,7 @@ final class HttpRoutesTest extends TestCase
 
     public function testCreateTask(): void
     {
-        $task = new Task(0, '', '', false, '');
+        $task = new Task(42, '', '', false, '');
 
         $params = ['title' => 'Test', 'duedate' => '2020-05-22'];
 

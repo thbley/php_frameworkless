@@ -105,7 +105,27 @@ class TasksRepository
         $query = sprintf('SELECT id, title, duedate, completed, last_updated_by FROM task WHERE id IN (%s)', $ids);
         $statement = $database->query($query);
 
-        return $statement->fetchAll(PDO::FETCH_CLASS, Task::class);
+        return $this->getTasksFromRows($statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * @param mixed[][] $rows
+     * @return Task[]
+     */
+    public function getTasksFromRows(array $rows): array
+    {
+        $tasks = [];
+        foreach ($rows as $row) {
+            $tasks[] = $this->getTask(
+                (int) ($row['id'] ?? 0),
+                (string) ($row['title'] ?? ''),
+                (string) ($row['duedate'] ?? ''),
+                (bool) ($row['completed'] ?? false),
+                (string) ($row['last_updated_by'] ?? '')
+            );
+        }
+
+        return $tasks;
     }
 
     /**
@@ -124,7 +144,7 @@ class TasksRepository
         $statement = $database->prepare($query);
         $statement->execute([$customer->id, date('Y-m-d', strtotime('+1 week'))]);
 
-        return $statement->fetchAll(PDO::FETCH_CLASS, Task::class);
+        return $this->getTasksFromRows($statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -143,7 +163,7 @@ class TasksRepository
         $statement = $database->prepare($query);
         $statement->execute([$customer->id]);
 
-        return $statement->fetchAll(PDO::FETCH_CLASS, Task::class);
+        return $this->getTasksFromRows($statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**

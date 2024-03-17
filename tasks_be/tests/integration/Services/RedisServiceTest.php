@@ -32,7 +32,10 @@ final class RedisServiceTest extends TestCase
 
         $actual = $redis->xRevRange($stream, '+', '-', 1);
 
-        $this->assertSame([$messageId => ['data' => json_encode(['id' => 42], 0)]], $actual);
+        $expected = [
+            'id' => 42, 'title' => 'test', 'duedate' => '2020-01-02', 'completed' => false, 'last_updated_by' => '',
+        ];
+        $this->assertSame([$messageId => ['data' => json_encode($expected, 0)]], $actual);
 
         $redis->del($stream);
     }

@@ -22,7 +22,7 @@ final class TasksControllerTest extends TestCase
     {
         $this->appMock = new AppMock($this->createMock(...), [], []);
 
-        $this->customer = new Customer(41, 'foo@invalid.local', '');
+        $this->customer = new Customer(41, 'foo@invalid.local');
     }
 
     public function testGetCurrentTasks(): void
@@ -146,6 +146,7 @@ final class TasksControllerTest extends TestCase
     public function testCreateTask(): void
     {
         $task = new Task(0, 'Test', '2020-05-22', false, $this->customer->email);
+        $task2 = new Task(42, 'Test', '2020-05-22', false, $this->customer->email);
 
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('getTask')
@@ -155,9 +156,7 @@ final class TasksControllerTest extends TestCase
         $this->appMock->getTasksRepository()->expects($this->once())
             ->method('createTask')
             ->with($this->customer, $task)
-            ->willReturn(42);
-
-        $task2 = new Task(42, 'Test', '2020-05-22', false, $this->customer->email);
+            ->willReturn($task2);
 
         $tasksController = new TasksController($this->appMock);
 

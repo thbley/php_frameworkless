@@ -22,7 +22,7 @@ final class TasksTest extends TestCase
     {
         $config = new Config();
         $authentication = new Authentication();
-        $customer = new Customer(42, 'foo.bar@invalid.local', '');
+        $customer = new Customer(42, 'foo.bar@invalid.local');
 
         $this->authorization = $authentication->getToken($customer, $config->privateKey);
     }

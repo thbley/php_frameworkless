@@ -27,8 +27,8 @@ final class TasksRepositoryTest extends TestCase
 
         $this->app->getDatabase()->beginTransaction();
 
-        $this->customer = new Customer(41, '', '');
-        $this->customer2 = new Customer(42, '', '');
+        $this->customer = new Customer(41, '');
+        $this->customer2 = new Customer(42, '');
 
         $this->task = new Task(0, 'test', '2020-05-22', false, 'foo@invalid.local');
     }
@@ -63,13 +63,13 @@ final class TasksRepositoryTest extends TestCase
     public function testCreateTask(): void
     {
         $expected = $this->app->getTasksRepository()->createTask($this->customer, $this->task);
-        $this->assertGreaterThan(0, $expected);
+        $this->assertGreaterThan(0, $expected->id);
 
         $query = '
             SELECT title, duedate, completed, last_updated_by FROM task WHERE id = ? AND customer_id = ?
         ';
         $statement = $this->app->getDatabase()->prepare($query);
-        $statement->execute([$expected, $this->customer->id]);
+        $statement->execute([$expected->id, $this->customer->id]);
 
         $expected = [
             'title' => 'test', 'duedate' => '2020-05-22', 'completed' => 0, 'last_updated_by' => 'foo@invalid.local',

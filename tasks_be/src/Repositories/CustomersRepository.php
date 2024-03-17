@@ -2,6 +2,7 @@
 
 namespace TaskService\Repositories;
 
+use PDO;
 use SensitiveParameter;
 use TaskService\Framework\App;
 use TaskService\Models\Customer;
@@ -15,12 +16,12 @@ class CustomersRepository
         $statement = $this->app->getDatabase()->prepare('SELECT id, email, password FROM customer WHERE email = ?');
         $statement->execute([$email]);
 
-        $customer = $statement->fetchObject(Customer::class);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
 
-        if ($customer === false || !password_verify($password, $customer->password)) {
+        if ($row === false || !password_verify($password, (string) ($row['password'] ?? ''))) {
             return null;
         }
 
-        return $customer;
+        return new Customer((int) ($row['id'] ?? 0), (string) ($row['email'] ?? ''));
     }
 }
