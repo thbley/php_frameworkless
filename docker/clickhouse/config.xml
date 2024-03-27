@@ -2,6 +2,7 @@
     <listen_host>0.0.0.0</listen_host>
     <listen_try>1</listen_try>
     <mysql_port>3306</mysql_port>
+    <postgresql_port>9005</postgresql_port>
     <logger>
         <level>warning</level>
         <console>1</console>
