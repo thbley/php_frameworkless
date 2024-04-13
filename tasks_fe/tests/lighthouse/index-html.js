@@ -5,7 +5,7 @@ import { formatOutput, lightHouse } from './utils/lighthouse.js';
 
 const browser = await puppeteer.launch({
     headless: true,
-    executablePath: 'chrome',
+    executablePath: '/usr/local/sbin/chrome',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     ignoreHTTPSErrors: true,
 });
