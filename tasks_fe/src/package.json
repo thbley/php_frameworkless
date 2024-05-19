@@ -12,6 +12,6 @@
     "@types/alpinejs": "^3",
     "alpinejs": "^3",
     "modern-normalize": "^2",
-    "web-vitals": "^3"
+    "web-vitals": "^4"
   }
 }
