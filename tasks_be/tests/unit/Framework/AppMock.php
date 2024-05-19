@@ -65,11 +65,7 @@ final class AppMock extends App
     private TasksSerializer&MockObject $tasksSerializer;
 
     /**
-     * @template InstanceType of object
-     *
-     * @psalm-impure
-     *
-     * @param callable(class-string<InstanceType>):MockObject&InstanceType $createMock
+     * @param callable $createMock
      * @param string[]|string[][] $server
      * @param string[] $input
      */
