@@ -1,13 +1,8 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.6.0/schema.json",
+    "$schema": "./tests/node_modules/@biomejs/biome/configuration_schema.json",
     "files": {
-        "include": [
-            "**/*.js"
-        ],
-        "ignore": [
-            "**/dist/**",
-            "**/playwright-report/**"
-        ]
+        "include": ["**/*.js", "**/*.html", "**/*.css"],
+        "ignore": ["**/dist/**", "**/playwright-report/**"]
     },
     "organizeImports": {
         "enabled": false
@@ -18,7 +13,8 @@
             "all": true,
             "nursery": {
                 "all": true,
-                "useImportRestrictions": "off"
+                "useImportRestrictions": "off",
+                "noNodejsModules": "off"
             },
             "suspicious": {
                 "all": true,
@@ -26,21 +22,22 @@
             }
         }
     },
-    "overrides": [{
-        "include": ["tests/**"],
-        "linter": {
-            "rules": {
-                "nursery": {
-                    "noNodejsModules": "off",
-                    "noConsole": "off"
-                },
-                "style": {
-                    "noDefaultExport": "off",
-                    "useNamingConvention": "off"
+    "overrides": [
+        {
+            "include": ["tests/**"],
+            "linter": {
+                "rules": {
+                    "nursery": {
+                        "noConsole": "off"
+                    },
+                    "style": {
+                        "noDefaultExport": "off",
+                        "useNamingConvention": "off"
+                    }
                 }
             }
         }
-    }],
+    ],
     "formatter": {
         "enabled": true,
         "indentStyle": "space",
@@ -53,9 +50,9 @@
             "bracketSpacing": true
         }
     },
-    "json": {
+    "css": {
         "formatter": {
-            "enabled": false
+            "enabled": true
         }
     }
 }
