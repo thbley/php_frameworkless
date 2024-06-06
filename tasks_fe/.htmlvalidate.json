@@ -1,12 +1,7 @@
 {
-    "extends": [
-      "html-validate:recommended",
-      "html-validate:document",
-      "html-validate:prettier"
-    ],
-
+    "extends": ["html-validate:recommended", "html-validate:document", "html-validate:prettier"],
     "rules": {
         "require-sri": "off",
         "missing-doctype": "off"
     }
-  }
+}

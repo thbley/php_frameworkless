@@ -2,10 +2,7 @@
     "compilerOptions": {
         "target": "esnext",
         "module": "esnext",
-        "lib": [
-            "esnext",
-            "dom"
-        ],
+        "lib": ["esnext", "dom"],
         "noEmit": true,
         "strict": true,
         "alwaysStrict": true,
@@ -36,7 +33,5 @@
         "./src/types/globals.d.ts",
         "**/*.js"
     ],
-    "exclude": [
-        "./dist/*.js"
-    ]
+    "exclude": ["./dist/*.js"]
 }
