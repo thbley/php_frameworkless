@@ -92,7 +92,7 @@ class App
             $config = $this->getConfig();
 
             $dsn = sprintf(
-                'pgsql:host=%s;dbname=%s;port=9005', $config->clickhouseHost, $config->clickhouseDatabase
+                'pgsql:host=%s;dbname=%s;port=9005;sslmode=disable', $config->clickhouseHost, $config->clickhouseDatabase
             );
             $options = [PDO::ATTR_TIMEOUT => 3, PDO::ATTR_EMULATE_PREPARES => 1];
 
