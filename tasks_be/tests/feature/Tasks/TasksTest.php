@@ -166,7 +166,7 @@ final class TasksTest extends TestCase
         $curlHandle = curl_init();
         curl_setopt_array($curlHandle, [
             CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_URL => sprintf('http://%s:8080' . $url, gethostbyname('nginx')),
+            CURLOPT_URL => 'http://nginx:8080' . $url,
             CURLOPT_POSTFIELDS => json_encode($params, JSON_FORCE_OBJECT),
             CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Authorization: ' . $this->authorization],
             CURLOPT_RETURNTRANSFER => 1,

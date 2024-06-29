@@ -19,7 +19,7 @@ final class EmailTest extends TestCase
 
         $curlHandle = curl_init();
         curl_setopt_array($curlHandle, [
-            CURLOPT_URL => sprintf('http://%s:8025/api/v1/messages?limit=1', gethostbyname('mailpit')),
+            CURLOPT_URL => 'http://mailpit:8025/api/v1/messages?limit=1',
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_TIMEOUT => 10,
         ]);
@@ -37,7 +37,7 @@ final class EmailTest extends TestCase
 
         $curlHandle = curl_init();
         curl_setopt_array($curlHandle, [
-            CURLOPT_URL => sprintf('http://%s:8025/api/v1/message/%s', gethostbyname('mailpit'), urlencode($id)),
+            CURLOPT_URL => 'http://mailpit:8025/api/v1/message/' . urlencode($id),
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_TIMEOUT => 10,
         ]);
