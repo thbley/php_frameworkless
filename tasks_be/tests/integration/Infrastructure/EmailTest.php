@@ -42,7 +42,7 @@ final class EmailTest extends TestCase
             CURLOPT_TIMEOUT => 10,
         ]);
         $response = (string) curl_exec($curlHandle);
-        $this->assertEmpty('', curl_error($curlHandle));
+        $this->assertSame('', curl_error($curlHandle));
         curl_close($curlHandle);
 
         /**
