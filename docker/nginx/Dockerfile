@@ -1,4 +1,4 @@
-FROM alpine:3.19 as build
+FROM alpine:3.20 as build
 
 RUN apk upgrade --no-cache \
     && apk add --no-cache openssl \
@@ -10,7 +10,7 @@ RUN apk upgrade --no-cache \
         -CAcreateserial \
         -extfile <(printf "authorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nsubjectAltName=DNS:nginx,IP:127.0.0.1")
 
-FROM alpine:3.19
+FROM alpine:3.20
 
 RUN apk upgrade --no-cache \
     && apk add --no-cache nginx \

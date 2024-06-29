@@ -1,6 +1,6 @@
 # see https://github.com/kminami/apib2swagger
 
-FROM alpine:3.19
+FROM alpine:3.20
 
 RUN apk upgrade --no-cache \
     && apk add --no-cache npm nodejs \

@@ -1,6 +1,6 @@
 // @ts-check
 
-import { emulateApiFetch } from '../utils/fetch';
+import { emulateApiFetch } from '../utils/fetch.js';
 
 /**
  * @param {import("@playwright/test").Page} page

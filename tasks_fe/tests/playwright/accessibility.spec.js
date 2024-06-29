@@ -2,7 +2,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { beforeEachTest } from './utils/helper';
+import { beforeEachTest } from './utils/helper.js';
 
 test.beforeEach(async ({ page }) => beforeEachTest(page));
 test.use({ bypassCSP: true }); // required by Axebuilder

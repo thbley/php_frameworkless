@@ -33,7 +33,7 @@
                 height: 32px;
             }
         }
-        a:link, a:visited {
+        a:visited, a:link {
             color: inherit;
         }
     }

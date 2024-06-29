@@ -1,6 +1,6 @@
 // @ts-check
 
-import { App } from '../../../src/framework/App';
+import { App } from '../../../src/framework/App.js';
 
 /**
  * @param {string} cookie

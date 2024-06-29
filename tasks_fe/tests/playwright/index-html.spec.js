@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, test } from '@playwright/test';
-import { afterEachTest, beforeEachTest } from './utils/helper';
+import { afterEachTest, beforeEachTest } from './utils/helper.js';
 
 test.beforeEach(async ({ page }) => beforeEachTest(page));
 test.afterEach(async ({ page }) => afterEachTest(page));

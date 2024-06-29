@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:3.20
 
 RUN apk upgrade --no-cache \
     && ARCH=$([ $(uname -m) == "x86_64" ] && echo "amd64" || echo "arm64") \

@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:edge
 
 # use 1 run command to reduce container image layers
 RUN apk --no-cache upgrade \

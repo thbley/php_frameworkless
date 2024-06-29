@@ -1,6 +1,6 @@
 services:
   php:
-    build: ./docker/php82
+    build: ./docker/php83
     image: example_tasks_php
     cap_drop: [all]
     volumes:
