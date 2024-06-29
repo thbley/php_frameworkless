@@ -2,6 +2,10 @@
 
 error_reporting(E_ALL);
 
+if (!file_exists('/tmp/coverage/index.xml')) {
+    return;
+}
+
 $xml = simplexml_load_file('/tmp/coverage/index.xml');
 
 /**

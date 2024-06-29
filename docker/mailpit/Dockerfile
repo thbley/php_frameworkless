@@ -11,4 +11,4 @@ EXPOSE 1025 8025
 
 HEALTHCHECK none
 
-CMD ["mailpit"]
+CMD ["mailpit", "-v"]
