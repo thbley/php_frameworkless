@@ -19,7 +19,7 @@ final class EmailTest extends TestCase
 
         $curlHandle = curl_init();
         curl_setopt_array($curlHandle, [
-            CURLOPT_URL => 'http://mailpit:8025/api/v1/messages?limit=1',
+            CURLOPT_URL => sprintf('http://%s:8025/api/v1/messages?limit=1', gethostbyname('mailpit')),
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_TIMEOUT => 10,
         ]);
